@@ -1,0 +1,129 @@
+{
+  "workflow": {
+    "unique_name": "definition_workflow_01T74M593MEOX4z5Z8PkjlPdNPAywYdXsht",
+    "name": "STIX/TAXII Service Discovery",
+    "title": "STIX/TAXII Service Discovery",
+    "type": "generic.workflow",
+    "base_type": "workflow",
+    "variables": [
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "output",
+          "name": "Collections JSON",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74M5995LY77QMH8TBQlFbttU53dSfK17",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Base64 Auth",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74M59965I40DLvapWnIAOhwYnM43dlvV",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Taxii Discovery URL",
+          "type": "datatype.string",
+          "is_required": true,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74M5995WXV05XgxBTCc1RLit1SF73kkJ",
+        "object_type": "variable_workflow"
+      }
+    ],
+    "properties": {
+      "atomic": {
+        "atomic_group": "Threat Feeds",
+        "is_atomic": true
+      },
+      "delete_workflow_instance": false,
+      "display_name": "STIX/TAXII Service Discovery",
+      "runtime_user": {
+        "target_default": true
+      },
+      "target": {
+        "no_target": true
+      }
+    },
+    "object_type": "definition_workflow",
+    "actions": [
+      {
+        "unique_name": "definition_activity_01T74M5BGFZ8L2G34eQbOlB0a0z7ZBNAfFE",
+        "name": "Execute Python Script",
+        "title": "Get Taxii Services",
+        "type": "python3.script",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "continue_on_failure": false,
+          "display_name": "Get Taxii Services",
+          "script": "import requests\nimport sys\n\nurl = sys.argv[1]\nb64 = None\nif len(sys.argv) \u003e= 3:\n    b64 = sys.argv[2]\npayload = '\u003cDiscovery_Request xmlns=\"http://taxii.mitre.org/messages/taxii_xml_binding-1.1\" message_id=\"1\"/\u003e'\nheaders = {\n  'X-TAXII-Content-Type': 'urn:taxii.mitre.org:message:xml:1.1',\n  'X-TAXII-Accept': 'urn:taxii.mitre.org:message:xml:1.1',\n  'X-TAXII-Services': 'urn:taxii.mitre.org:services:1.1',\n  'X-TAXII-Protocol': 'urn:taxii.mitre.org:protocol:http:1.0',\n  'Content-Type': 'application/xml'\n}\n\nif b64 is not None:\n    headers.update(\n        {'Authorization': 'Basic %s' % b64})\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\ndata = response.text",
+          "script_arguments": [
+            "$workflow.definition_workflow_01T74M593MEOX4z5Z8PkjlPdNPAywYdXsht.input.variable_workflow_01T74M5995WXV05XgxBTCc1RLit1SF73kkJ$",
+            "$workflow.definition_workflow_01T74M593MEOX4z5Z8PkjlPdNPAywYdXsht.input.variable_workflow_01T74M59965I40DLvapWnIAOhwYnM43dlvV$"
+          ],
+          "script_queries": [
+            {
+              "script_query": "data",
+              "script_query_name": "data",
+              "script_query_type": "string"
+            }
+          ],
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01T74M5C9Z3HN64eWtuGgpEWkyqotZTQS3g",
+        "name": "Convert Xml to Json",
+        "title": "Convert Taxii Xml to Json",
+        "type": "core.xml2json",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Convert Taxii Xml to Json",
+          "input_xml": "$activity.definition_activity_01T74M5BGFZ8L2G34eQbOlB0a0z7ZBNAfFE.output.script_queries.data$",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01T74M5D0J26C2LKLrPluNTwxSRFu1bcdDR",
+        "name": "Set Variables",
+        "title": "Set Output",
+        "type": "core.set_multiple_variables",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Set Output",
+          "skip_execution": false,
+          "variables_to_update": [
+            {
+              "variable_to_update": "$workflow.definition_workflow_01T74M593MEOX4z5Z8PkjlPdNPAywYdXsht.output.variable_workflow_01T74M5995LY77QMH8TBQlFbttU53dSfK17$",
+              "variable_value_new": "$activity.definition_activity_01T74M5C9Z3HN64eWtuGgpEWkyqotZTQS3g.output.output_json$"
+            }
+          ]
+        },
+        "object_type": "definition_activity"
+      }
+    ],
+    "categories": [
+      "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+    ]
+  }
+}
