@@ -1,0 +1,156 @@
+{
+  "workflow": {
+    "unique_name": "definition_workflow_01T6J5W5UQGGR2Npq1iXjC91Q5ruXlnWDCO",
+    "name": "STIX/TAXII Poll Collection",
+    "title": "STIX/TAXII Poll Collection",
+    "type": "generic.workflow",
+    "base_type": "workflow",
+    "variables": [
+      {
+        "schema_id": "datatype.integer",
+        "properties": {
+          "value": 5,
+          "scope": "input",
+          "name": "Lookback Days",
+          "type": "datatype.integer",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T6K173SC17W6qQOWbHumqfGUpSc7kWo7U",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Taxii Collection",
+          "type": "datatype.string",
+          "is_required": true,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T6J7VMBV6XT6oRk4FSTYZztjkrZ810j1z",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Base64 Auth",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74AVP2L1XI35z4P4ubISQpDWWu6W4WHJ",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "output",
+          "name": "STIX JSON",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74F5UMH3V20khs3YOEFQmS5YuluUjE3z",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Taxii Poll URL",
+          "type": "datatype.string",
+          "is_required": true,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T6J5W606D4228KNZv0A1p4sojtXs4dCYN",
+        "object_type": "variable_workflow"
+      }
+    ],
+    "properties": {
+      "atomic": {
+        "atomic_group": "Threat Feeds",
+        "is_atomic": true
+      },
+      "delete_workflow_instance": false,
+      "display_name": "STIX/TAXII Poll Collection",
+      "runtime_user": {
+        "target_default": true
+      },
+      "target": {
+        "no_target": true
+      }
+    },
+    "object_type": "definition_workflow",
+    "actions": [
+      {
+        "unique_name": "definition_activity_01T6K95RVI44Q5fH4Q7RPyDbgMRSO8gXKXB",
+        "name": "Execute Python Script",
+        "title": "Poll Taxii Collection",
+        "type": "python3.script",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "continue_on_failure": false,
+          "display_name": "Poll Taxii Collection",
+          "script": "import requests\nimport sys\nimport base64\nfrom datetime import datetime, timedelta\n\ntaxii_ns = 'http://taxii.mitre.org/messages/taxii_xml_binding-1.1'\n\nurl = sys.argv[1]\nfeedname = sys.argv[2]\nb64 = None\nif len(sys.argv) \u003e= 4:\n    b64 = sys.argv[3]\n\n\ndef taxii_req(lookback):\n    now = datetime.strftime(datetime.utcnow(), \"%Y-%m-%dT%H:%M:%S\") + '.000000+00:00'\n    delta = datetime.strftime(datetime.utcnow() - timedelta(days=lookback), \"%Y-%m-%dT%H:%M:%S\") + '.000000+00:00'\n    # Construct an XML document with 'Poll_Request' as the top-level node name.\n    xmldata = '''\u003ctaxii_11:Poll_Request \n    xmlns:taxii_11=\"http://taxii.mitre.org/messages/taxii_xml_binding-1.1\"\n    message_id=\"42158\"\n    collection_name=\"{0}\"\u003e\n    \u003ctaxii_11:Exclusive_Begin_Timestamp\u003e{1}\u003c/taxii_11:Exclusive_Begin_Timestamp\u003e\n    \u003ctaxii_11:Inclusive_End_Timestamp\u003e{2}\u003c/taxii_11:Inclusive_End_Timestamp\u003e\n    \u003ctaxii_11:Poll_Parameters allow_asynch=\"false\"\u003e\n        \u003ctaxii_11:Response_Type\u003eFULL\u003c/taxii_11:Response_Type\u003e\n    \u003c/taxii_11:Poll_Parameters\u003e\n    \u003c/taxii_11:Poll_Request\u003e'''.format(feedname, delta, now)\n    return xmldata\n\n\npayload = taxii_req($workflow.definition_workflow_01T6J5W5UQGGR2Npq1iXjC91Q5ruXlnWDCO.input.variable_workflow_01T6K173SC17W6qQOWbHumqfGUpSc7kWo7U$)\nheaders = {\n    'X-TAXII-Content-Type': 'urn:taxii.mitre.org:message:xml:1.1',\n    'X-TAXII-Accept': 'urn:taxii.mitre.org:message:xml:1.1',\n    'X-TAXII-Services': 'urn:taxii.mitre.org:services:1.1',\n    'X-TAXII-Protocol': 'urn:taxii.mitre.org:protocol:http:1.0',\n    'Content-Type': 'application/xml'\n}\nif b64 is not None:\n    headers.update(\n        {'Authorization': 'Basic %s' % b64})\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\ndata = response.text",
+          "script_arguments": [
+            "$workflow.definition_workflow_01T6J5W5UQGGR2Npq1iXjC91Q5ruXlnWDCO.input.variable_workflow_01T6J5W606D4228KNZv0A1p4sojtXs4dCYN$",
+            "$workflow.definition_workflow_01T6J5W5UQGGR2Npq1iXjC91Q5ruXlnWDCO.input.variable_workflow_01T6J7VMBV6XT6oRk4FSTYZztjkrZ810j1z$",
+            "$workflow.definition_workflow_01T6J5W5UQGGR2Npq1iXjC91Q5ruXlnWDCO.input.variable_workflow_01T74AVP2L1XI35z4P4ubISQpDWWu6W4WHJ$"
+          ],
+          "script_queries": [
+            {
+              "script_query": "data",
+              "script_query_name": "data",
+              "script_query_type": "string"
+            }
+          ],
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01T6J5W97Q1JI48vXqu9iF5zFegKq6FqONz",
+        "name": "Convert Xml to Json",
+        "title": "Convert Taxii Xml to Json",
+        "type": "core.xml2json",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Convert Taxii Xml to Json",
+          "input_xml": "$activity.definition_activity_01T6K95RVI44Q5fH4Q7RPyDbgMRSO8gXKXB.output.script_queries.data$",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01T74F7801BO1081Hg6mKeJMdh2KqnEjYtU",
+        "name": "Set Variables",
+        "title": "Set Output",
+        "type": "core.set_multiple_variables",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Set Output",
+          "skip_execution": false,
+          "variables_to_update": [
+            {
+              "variable_to_update": "$workflow.definition_workflow_01T6J5W5UQGGR2Npq1iXjC91Q5ruXlnWDCO.output.variable_workflow_01T74F5UMH3V20khs3YOEFQmS5YuluUjE3z$",
+              "variable_value_new": "$activity.definition_activity_01T6J5W97Q1JI48vXqu9iF5zFegKq6FqONz.output.output_json$"
+            }
+          ]
+        },
+        "object_type": "definition_activity"
+      }
+    ],
+    "categories": [
+      "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+    ]
+  }
+}
