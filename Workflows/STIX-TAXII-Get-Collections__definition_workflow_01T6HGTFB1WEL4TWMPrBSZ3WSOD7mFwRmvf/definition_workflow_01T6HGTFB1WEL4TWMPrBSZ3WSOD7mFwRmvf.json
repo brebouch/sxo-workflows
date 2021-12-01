@@ -1,0 +1,129 @@
+{
+  "workflow": {
+    "unique_name": "definition_workflow_01T6HGTFB1WEL4TWMPrBSZ3WSOD7mFwRmvf",
+    "name": "STIX/TAXII Get Collections",
+    "title": "STIX/TAXII Get Collections",
+    "type": "generic.workflow",
+    "base_type": "workflow",
+    "variables": [
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Base64 Auth",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74GSATETER75U6WWCJiWlDSngd2i8OAz",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "output",
+          "name": "Collections JSON",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T74H84UAYUD1zbdDN6BkF2vlgTTyKvDgt",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "input",
+          "name": "Taxii Collections URL",
+          "type": "datatype.string",
+          "is_required": true,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01T6HMQLCRW4J1x62PyqRNoxCVqauNIbL3w",
+        "object_type": "variable_workflow"
+      }
+    ],
+    "properties": {
+      "atomic": {
+        "atomic_group": "Threat Feeds",
+        "is_atomic": true
+      },
+      "delete_workflow_instance": false,
+      "display_name": "STIX/TAXII Get Collections",
+      "runtime_user": {
+        "target_default": true
+      },
+      "target": {
+        "no_target": true
+      }
+    },
+    "object_type": "definition_workflow",
+    "actions": [
+      {
+        "unique_name": "definition_activity_01T6HGZ1KAOA44hZh3S7yv5TSioNGNkcnfh",
+        "name": "Execute Python Script",
+        "title": "Get Taxii Collections",
+        "type": "python3.script",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "continue_on_failure": false,
+          "display_name": "Get Taxii Collections",
+          "script": "import requests\nimport sys\n\nurl = sys.argv[1]\nb64 = None\nif len(sys.argv) \u003e= 3:\n    b64 = sys.argv[2]\npayload = \"\u003ctaxii_11:Collection_Information_Request xmlns:taxii_11=\\\"http://taxii.mitre.org/messages/taxii_xml_binding-1.1\\\" message_id=\\\"26300\\\"/\u003e\"\nheaders = {\n  'X-TAXII-Content-Type': 'urn:taxii.mitre.org:message:xml:1.1',\n  'X-TAXII-Accept': 'urn:taxii.mitre.org:message:xml:1.1',\n  'X-TAXII-Services': 'urn:taxii.mitre.org:services:1.1',\n  'X-TAXII-Protocol': 'urn:taxii.mitre.org:protocol:http:1.0',\n  'Content-Type': 'application/xml'\n}\n\nif b64 is not None:\n    headers.update(\n        {'Authorization': 'Basic %s' % b64})\n\nresponse = requests.request(\"POST\", url, headers=headers, data=payload)\ndata = response.text",
+          "script_arguments": [
+            "$workflow.definition_workflow_01T6HGTFB1WEL4TWMPrBSZ3WSOD7mFwRmvf.input.variable_workflow_01T6HMQLCRW4J1x62PyqRNoxCVqauNIbL3w$",
+            "$workflow.definition_workflow_01T6HGTFB1WEL4TWMPrBSZ3WSOD7mFwRmvf.input.variable_workflow_01T74GSATETER75U6WWCJiWlDSngd2i8OAz$"
+          ],
+          "script_queries": [
+            {
+              "script_query": "data",
+              "script_query_name": "data",
+              "script_query_type": "string"
+            }
+          ],
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01T6HNKLY7DKS3bNPouxa0dE6a8LtJOd6C1",
+        "name": "Convert Xml to Json",
+        "title": "Convert Taxii Xml to Json",
+        "type": "core.xml2json",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Convert Taxii Xml to Json",
+          "input_xml": "$activity.definition_activity_01T6HGZ1KAOA44hZh3S7yv5TSioNGNkcnfh.output.script_queries.data$",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01T74H9H4H8UO7eixsEarJlPYT6xmFT43Y5",
+        "name": "Set Variables",
+        "title": "Set Output",
+        "type": "core.set_multiple_variables",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Set Output",
+          "skip_execution": false,
+          "variables_to_update": [
+            {
+              "variable_to_update": "$workflow.definition_workflow_01T6HGTFB1WEL4TWMPrBSZ3WSOD7mFwRmvf.output.variable_workflow_01T74H84UAYUD1zbdDN6BkF2vlgTTyKvDgt$",
+              "variable_value_new": "$activity.definition_activity_01T6HNKLY7DKS3bNPouxa0dE6a8LtJOd6C1.output.output_json$"
+            }
+          ]
+        },
+        "object_type": "definition_activity"
+      }
+    ],
+    "categories": [
+      "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+    ]
+  }
+}
