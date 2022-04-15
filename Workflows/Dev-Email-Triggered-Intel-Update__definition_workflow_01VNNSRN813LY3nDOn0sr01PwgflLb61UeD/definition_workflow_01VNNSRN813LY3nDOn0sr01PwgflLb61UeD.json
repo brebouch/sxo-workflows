@@ -1,0 +1,2785 @@
+{
+  "workflow": {
+    "unique_name": "definition_workflow_01VNNSRN813LY3nDOn0sr01PwgflLb61UeD",
+    "name": "Dev-Email Triggered Intel Update",
+    "title": "Dev-Email Triggered Intel Update",
+    "type": "generic.workflow",
+    "base_type": "workflow",
+    "variables": [
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "local",
+          "name": "Intelligence Data",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01VNNSRNG98QA2Q2YkexOFrCtQCFUQjf17t",
+        "object_type": "variable_workflow"
+      },
+      {
+        "schema_id": "datatype.string",
+        "properties": {
+          "value": "",
+          "scope": "local",
+          "name": "Search Text",
+          "type": "datatype.string",
+          "is_required": false,
+          "is_invisible": false
+        },
+        "unique_name": "variable_workflow_01VNNSRNG8XFT0VucZ3XM1uiNH7dTHqTJSv",
+        "object_type": "variable_workflow"
+      }
+    ],
+    "properties": {
+      "atomic": {
+        "is_atomic": false
+      },
+      "delete_workflow_instance": false,
+      "display_name": "Dev-Email Triggered Intel Update",
+      "runtime_user": {
+        "target_default": true
+      },
+      "target": {
+        "no_target": true
+      }
+    },
+    "object_type": "definition_workflow",
+    "actions": [
+      {
+        "unique_name": "definition_activity_01VNNSTATH1RM0b11ibnfgFTF02oWxdYxQF",
+        "name": "Format Date",
+        "title": "Format Date",
+        "type": "core.format_date",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Format Date",
+          "format_string": "2006-01-02T15:04:05.999999999Z",
+          "original_date": "$workflow.definition_workflow_01VNNSRN813LY3nDOn0sr01PwgflLb61UeD.output.start_time$",
+          "skip_execution": false,
+          "use_custom_format": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01VNNSTC4HFDK1UJhiHXbftGc43iOu30sRC",
+        "name": "Set Variables",
+        "title": "Get Email Body",
+        "type": "core.set_multiple_variables",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Get Email Body",
+          "skip_execution": false,
+          "variables_to_update": [
+            {
+              "variable_to_update": "$workflow.definition_workflow_01VNNSRN813LY3nDOn0sr01PwgflLb61UeD.local.variable_workflow_01VNNSRNG8XFT0VucZ3XM1uiNH7dTHqTJSv$",
+              "variable_value_new": "$trigger.triggerevent_01VNNTNETMRJQ2dehxt4OnST4P1BFn20A1k.output.message$"
+            }
+          ]
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01VNNSTDD3IEE2br8YlnpHAAWio9orRc54v",
+        "name": "Condition Block",
+        "title": "If Email Has Attachments",
+        "type": "logic.if_else",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "If Email Has Attachments",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "blocks": [
+          {
+            "unique_name": "definition_activity_01VNNSTEH6E7V0iUBrJlWPWdyFPivUG8vyh",
+            "name": "Condition Branch",
+            "title": "True",
+            "type": "logic.condition_block",
+            "base_type": "activity",
+            "properties": {
+              "condition": {
+                "left_operand": "$trigger.triggerevent_01VNNTNETMRJQ2dehxt4OnST4P1BFn20A1k.output.attachments_count$",
+                "operator": "gt",
+                "right_operand": 0
+              },
+              "continue_on_failure": false,
+              "display_name": "True",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "actions": [
+              {
+                "unique_name": "definition_activity_01VNNSTFZPJ0J1eHqVyos57T2aaluv3TAZy",
+                "name": "PDF String to Text",
+                "title": "PDF String to Text",
+                "type": "workflow.sub_workflow",
+                "base_type": "subworkflow",
+                "properties": {
+                  "continue_on_failure": false,
+                  "display_name": "PDF String to Text",
+                  "input": {
+                    "variable_workflow_01VNNSRPVFYXI5btx0YKoJr0WCL62TMFARG": "imap.gmail.com",
+                    "variable_workflow_01VNNSRPVHTDN4fFJ7FnXgsguCJKEiTmvHU": "$trigger.triggerevent_01VNNTNETMRJQ2dehxt4OnST4P1BFn20A1k.output.subject$",
+                    "variable_workflow_01VNNSRPVI5W2569QS7fBu3ZOPQeZSEQNnd": "brennan@dev-labs.ninja"
+                  },
+                  "runtime_user": {
+                    "target_default": true
+                  },
+                  "skip_execution": false,
+                  "target": {
+                    "no_target": true
+                  },
+                  "workflow_id": "definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb",
+                  "workflow_name": "Dev-PDF String to Text"
+                },
+                "object_type": "definition_activity"
+              },
+              {
+                "unique_name": "definition_activity_01VNNSTHAGBSR59AEp9xvIw1xt8OlDZIalS",
+                "name": "Set Variables",
+                "title": "Get Attachment Text",
+                "type": "core.set_multiple_variables",
+                "base_type": "activity",
+                "properties": {
+                  "continue_on_failure": false,
+                  "display_name": "Get Attachment Text",
+                  "skip_execution": false,
+                  "variables_to_update": [
+                    {
+                      "variable_to_update": "$workflow.definition_workflow_01VNNSRN813LY3nDOn0sr01PwgflLb61UeD.local.variable_workflow_01VNNSRNG8XFT0VucZ3XM1uiNH7dTHqTJSv$",
+                      "variable_value_new": "$activity.definition_activity_01VNNSTFZPJ0J1eHqVyos57T2aaluv3TAZy.output.variable_workflow_01VNNSRPVGCRR2dxhXjtYX19Fzierl7dWx5$"
+                    }
+                  ]
+                },
+                "object_type": "definition_activity"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unique_name": "definition_activity_01VNNSTI9NGE91RkcEnMkVkE1ivEAtneYQ8",
+        "name": "Execute Python Script",
+        "title": "Cleanup Search Text",
+        "type": "python3.script",
+        "base_type": "activity",
+        "properties": {
+          "action_timeout": 180,
+          "continue_on_failure": false,
+          "display_name": "Cleanup Search Text",
+          "script": "import sys\nimport re\n\n# Extract the HTML of the blog post\nsearch_text = sys.argv[1]\n\n\n# Strip \u003cscript /\u003e tags\nsearch_text = re.sub(r'\u003cscript\\b[^\u003c]*(?:(?!\u003c\\/script\u003e)\u003c[^\u003c]*)*\u003c\\/script\u003e', '', str(search_text), flags=re.DOTALL)\n\n# Strip \u003cstyle /\u003e tags\nsearch_text = re.sub(r'\u003cstyle\\b[^\u003c]*(?:(?!\u003c\\/style\u003e)\u003c[^\u003c]*)*\u003c\\/style\u003e', '', search_text, flags=re.DOTALL)\n\n# Strip other HTML\nsearch_text = re.sub(r'\u003c[^\u003c]+?\u003e', '', search_text, flags=re.DOTALL)\n\n# Replace new lines with a space\nsearch_text = search_text.replace(\"\\n\", \" \")\n# Replace carrage retrun with a space\nsearch_text = search_text.replace(\"\\r\", \" \")",
+          "script_arguments": [
+            "$workflow.definition_workflow_01VNNSRN813LY3nDOn0sr01PwgflLb61UeD.local.variable_workflow_01VNNSRNG8XFT0VucZ3XM1uiNH7dTHqTJSv$"
+          ],
+          "script_queries": [
+            {
+              "script_query": "search_text",
+              "script_query_name": "cleaned_text",
+              "script_query_type": "string"
+            }
+          ],
+          "skip_execution": false
+        },
+        "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01VNNSTJG0BS16Ixh9h0dPdsVfhKDZ5ISWs",
+        "name": "Inspect Observables for Review",
+        "title": "Inspect Observables for Review",
+        "type": "workflow.sub_workflow",
+        "base_type": "subworkflow",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Inspect Observables for Review",
+          "input": {
+            "variable_workflow_01VNNSRQPGTJR6jEUlYKuapYNcfLenj1ZUP": "$trigger.triggerevent_01VNNTNETMRJQ2dehxt4OnST4P1BFn20A1k.output.sender$",
+            "variable_workflow_01VNNSRQPH7GU5obhrOG16g1IfYcCe0GijU": "$activity.definition_activity_01VNNSTI9NGE91RkcEnMkVkE1ivEAtneYQ8.output.script_queries.cleaned_text$"
+          },
+          "runtime_user": {
+            "target_default": true
+          },
+          "skip_execution": false,
+          "target": {
+            "no_target": true
+          },
+          "workflow_id": "definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg",
+          "workflow_name": "Dev-Inspect Observables for Review"
+        },
+        "object_type": "definition_activity"
+      }
+    ],
+    "categories": [
+      "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+    ]
+  },
+  "triggers": {
+    "triggerevent_01VNNTNETMRJQ2dehxt4OnST4P1BFn20A1k": {
+      "workflow_id": "definition_workflow_01VNNSRN813LY3nDOn0sr01PwgflLb61UeD",
+      "name": "Email In",
+      "title": "",
+      "lowercase_name": "event.email_in",
+      "type": "event",
+      "base_type": "trigger",
+      "ref_id": "event_01ULKS5SEU5HD6Eb2eIvsqwvpdsixkdy3Hs",
+      "version": "1.0.0",
+      "disabled": false,
+      "unique_name": "triggerevent_01VNNTNETMRJQ2dehxt4OnST4P1BFn20A1k",
+      "object_type": "triggerevent"
+    }
+  },
+  "events": {
+    "event_01ULKS5SEU5HD6Eb2eIvsqwvpdsixkdy3Hs": {
+      "name": "DevLabs Email",
+      "title": "DevLabs Email",
+      "type": "email.event",
+      "base_type": "event",
+      "object_type": "event",
+      "target_id": "definition_target_01ULKRQ4PSQB76KHXBfOokhFR7EX4GulCM9",
+      "webhook_id": "",
+      "version": "1.0.0",
+      "properties": {
+        "action": "read",
+        "conditions": {
+          "left_operand": "$output.subject$",
+          "operator": "eqi",
+          "right_operand": "test"
+        },
+        "display_name": "DevLabs Email",
+        "download_attachments": true,
+        "folder": "INBOX",
+        "target_id": "definition_target_01ULKRQ4PSQB76KHXBfOokhFR7EX4GulCM9",
+        "title": "DevLabs Email"
+      },
+      "unique_name": "event_01ULKS5SEU5HD6Eb2eIvsqwvpdsixkdy3Hs"
+    }
+  },
+  "targets": {
+    "definition_target_01K5COTHDZH1W6eSF3GAm4O7L3H9VEnU4zA": {
+      "unique_name": "definition_target_01K5COTHDZH1W6eSF3GAm4O7L3H9VEnU4zA",
+      "name": "CTR API Target",
+      "title": "CTR API Target",
+      "type": "web-service.endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "description": "Target used to invoke iroh endpoints",
+        "disable_certificate_validation": false,
+        "display_name": "CTR API Target",
+        "host": "visibility.amp.cisco.com",
+        "no_runtime_user": true,
+        "path": "/iroh",
+        "protocol": "https"
+      }
+    },
+    "definition_target_01K5COTP8CXMN0JVKBa9RTBZek66BtyqWfh": {
+      "unique_name": "definition_target_01K5COTP8CXMN0JVKBa9RTBZek66BtyqWfh",
+      "name": "CTR Target for access token",
+      "title": "CTR Target for access token",
+      "type": "web-service.endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "default_runtime_user_id": "definition_runtime_user_01G9UGCFYZ7CN0OelN4pKwTDtjDeg7X9IHE",
+        "description": "CTR_For_Access_Token",
+        "disable_certificate_validation": false,
+        "display_name": "CTR Target for access token",
+        "host": "visibility.amp.cisco.com",
+        "no_runtime_user": false,
+        "path": "/iroh",
+        "protocol": "https"
+      }
+    },
+    "definition_target_01K5COUSEPCVI7HcW6n8hSBVpr1kghgrMob": {
+      "unique_name": "definition_target_01K5COUSEPCVI7HcW6n8hSBVpr1kghgrMob",
+      "name": "Email Endpoint",
+      "title": "Email Endpoint",
+      "type": "email.smtp_endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "default_runtime_user_id": "definition_runtime_user_01UKSYS1S96JP0q3OWCQ2wGrVjnVOeG0PQf",
+        "description": "Email Endpoint",
+        "display_name": "Email Endpoint",
+        "no_runtime_user": false,
+        "port": 587,
+        "protocol": "SMTP",
+        "server": "smtp.gmail.com"
+      }
+    },
+    "definition_target_01ULKRQ4PSQB76KHXBfOokhFR7EX4GulCM9": {
+      "unique_name": "definition_target_01ULKRQ4PSQB76KHXBfOokhFR7EX4GulCM9",
+      "name": "Dev-Labs IMAP",
+      "title": "Dev-Labs IMAP",
+      "type": "email.imap_endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "default_runtime_user_id": "definition_runtime_user_01UKSYS1S96JP0q3OWCQ2wGrVjnVOeG0PQf",
+        "display_name": "Dev-Labs IMAP",
+        "ignore_certificate_errors": false,
+        "polling_interval": 30,
+        "port": 993,
+        "protocol": "IMAP",
+        "server": "imap.gmail.com",
+        "tls_enabled": true
+      }
+    },
+    "definition_target_01UVS7JJQBK4C1oaUIzyAcy8bwAUom7f0eE": {
+      "unique_name": "definition_target_01UVS7JJQBK4C1oaUIzyAcy8bwAUom7f0eE",
+      "name": "Team Demo Bot",
+      "title": "Team Demo Bot",
+      "type": "web-service.endpoint",
+      "base_type": "target",
+      "object_type": "definition_target",
+      "properties": {
+        "disable_certificate_validation": false,
+        "display_name": "Team Demo Bot",
+        "host": "ngrok-test.ngrok.io",
+        "ignore_proxy": false,
+        "no_runtime_user": true,
+        "port": 443,
+        "protocol": "https"
+      }
+    }
+  },
+  "runtime_users": {
+    "definition_runtime_user_01G9UGCFYZ7CN0OelN4pKwTDtjDeg7X9IHE": {
+      "unique_name": "definition_runtime_user_01G9UGCFYZ7CN0OelN4pKwTDtjDeg7X9IHE",
+      "name": "CTR_Credentials",
+      "title": "CTR_Credentials",
+      "description": "Account Key for CTR",
+      "type": "runtime_user.web-service_basic_credentials",
+      "base_type": "runtime_user",
+      "object_type": "definition_runtime_user",
+      "properties": {
+        "auth_option": "*****",
+        "basic_password": "*****",
+        "basic_username": "*****",
+        "display_name": "CTR_Credentials"
+      }
+    },
+    "definition_runtime_user_01UKSYS1S96JP0q3OWCQ2wGrVjnVOeG0PQf": {
+      "unique_name": "definition_runtime_user_01UKSYS1S96JP0q3OWCQ2wGrVjnVOeG0PQf",
+      "name": "Dev Labs IMAP Keys",
+      "title": "Dev Labs IMAP Keys",
+      "type": "runtime_user.email_credentials",
+      "base_type": "runtime_user",
+      "object_type": "definition_runtime_user",
+      "properties": {
+        "display_name": "Dev Labs IMAP Keys",
+        "password": "*****",
+        "sender": "*****"
+      }
+    }
+  },
+  "variables": {
+    "variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG": {
+      "unique_name": "variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG",
+      "schema_id": "tabletype_01UOXTAPSOHQ25GPISDKG8EH4UHPsH7FsZv",
+      "properties": {
+        "value": [
+          {
+            "column_data": {
+              "decision": "init",
+              "first_seen": "01-01-1900",
+              "observable_type": "init",
+              "observable_value": "init",
+              "reviewed_timestamp": "0001-01-01T00:00:00+00:00",
+              "reviewer": "",
+              "source": "init"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.337Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:42:46.409Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:52.961Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T17:45:53.061Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.514Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:18.577Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.495Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:22:50.604Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.614Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:26:29.606Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.966Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:49:24.898Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.767Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-03-15T19:54:37.781Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.497Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-13T15:01:20.577Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "domain",
+              "observable_value": "www.cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "domain",
+              "observable_value": "internetbadguys.com",
+              "source": "Umbrella : Malicious \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "domain",
+              "observable_value": "cnn.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "email",
+              "observable_value": "brebouch@cisco.com",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "url",
+              "observable_value": "http://www.cisco.com/go/security",
+              "source": " \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "email",
+              "observable_value": "brennan@dev-labs.ninja",
+              "source": "Umbrella : Clean \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:23.786Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          },
+          {
+            "column_data": {
+              "decision": "Approval Required",
+              "first_seen": "2022-04-14T18:25:22.334Z",
+              "observable_type": "ip",
+              "observable_value": "8.8.8.8",
+              "source": "Umbrella : Unknown \\n \u003c/ul\u003e"
+            }
+          }
+        ],
+        "scope": "global",
+        "name": "Seen Observables",
+        "type": "datatype.table",
+        "is_required": false,
+        "is_invisible": false
+      },
+      "object_type": "variable"
+    }
+  },
+  "table_types": {
+    "tabletype_01UOXTAPSOHQ25GPISDKG8EH4UHPsH7FsZv": {
+      "unique_name": "tabletype_01UOXTAPSOHQ25GPISDKG8EH4UHPsH7FsZv",
+      "data_type": "datatype.tabletype",
+      "display_name": "Known Observables",
+      "columns": [
+        {
+          "is_required": true,
+          "name": "observable_value",
+          "title": "observable_value",
+          "type": "string"
+        },
+        {
+          "is_required": true,
+          "name": "decision",
+          "title": "decision",
+          "type": "string"
+        },
+        {
+          "name": "reviewer",
+          "title": "reviewer",
+          "type": "string"
+        },
+        {
+          "name": "reviewed_timestamp",
+          "title": "reviewed_timestamp",
+          "type": "date"
+        },
+        {
+          "is_required": true,
+          "name": "first_seen",
+          "title": "first_seen",
+          "type": "date"
+        },
+        {
+          "is_required": true,
+          "name": "source",
+          "title": "source",
+          "type": "string"
+        },
+        {
+          "is_required": true,
+          "name": "observable_type",
+          "title": "observable_type",
+          "type": "string"
+        }
+      ],
+      "base_type": "datatype",
+      "object_type": "tabletype"
+    }
+  },
+  "subworkflows": [
+    {
+      "workflow": {
+        "unique_name": "definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb",
+        "name": "Dev-PDF String to Text",
+        "title": "Dev-PDF String to Text",
+        "type": "generic.workflow",
+        "base_type": "workflow",
+        "variables": [
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "K84322643688957",
+              "scope": "local",
+              "name": "PDF to Text API Key",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRPVGPZ90lBSeWGUWiCCkOkFbqX2hg",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "output",
+              "name": "Attachment Text",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRPVGCRR2dxhXjtYX19Fzierl7dWx5",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "input",
+              "name": "IMAP USER",
+              "type": "datatype.string",
+              "is_required": true,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRPVI5W2569QS7fBu3ZOPQeZSEQNnd",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "imap.gmail.com",
+              "scope": "input",
+              "name": "IMAP Server",
+              "type": "datatype.string",
+              "is_required": true,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRPVFYXI5btx0YKoJr0WCL62TMFARG",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "local",
+              "name": "IMAP Password String",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRPVHGU72yoATGMJWS5BRItqKQe24l",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "input",
+              "name": "Email Subject",
+              "type": "datatype.string",
+              "is_required": true,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRPVHTDN4fFJ7FnXgsguCJKEiTmvHU",
+            "object_type": "variable_workflow"
+          }
+        ],
+        "properties": {
+          "atomic": {
+            "is_atomic": false
+          },
+          "delete_workflow_instance": false,
+          "display_name": "Dev-PDF String to Text",
+          "runtime_user": {
+            "target_default": true
+          },
+          "target": {
+            "no_target": true
+          }
+        },
+        "object_type": "definition_workflow",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01VNNSRT41LUG73MciwTVaJHuamKMlZjLJ6",
+            "name": "Execute Python Script",
+            "title": "Post PDF to Text",
+            "type": "python3.script",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": false,
+              "display_name": "Post PDF to Text",
+              "script": "import email\nimport getpass, imaplib\nimport os\nimport sys\nimport base64\nimport requests\n\nsubject = sys.argv[1]\nuserName = sys.argv[2]\npasswd = sys.argv[3]\nattach = []\ntext_output = ''\ntry:\n    imapSession = imaplib.IMAP4_SSL(sys.argv[4])\n    typ, accountDetails = imapSession.login(userName, passwd)\n    if typ != 'OK':\n        print('Not able to sign in!')\n\n    imapSession.select('Inbox')\n    typ, data = imapSession.search(None, '(SUBJECT \"' + subject + '\")')\n    if typ != 'OK':\n        print('Error searching Inbox.')\n\n    # Iterating over all emails\n    for msgId in data[0].split():\n        msg_id = msgId.decode()\n        #if msg_id_decoded != msg_id:\n        #    continue\n        typ, messageParts = imapSession.fetch(msg_id, '(RFC822)')\n        if typ != 'OK':\n            print('Error fetching mail.')\n\n        emailBody = messageParts[0][1].decode(\"utf-8\")\n        mail = email.message_from_string(emailBody)\n        for part in mail.walk():\n            if part.get_content_maintype() == 'multipart':\n                # print part.as_string()\n                continue\n            if part.get('Content-Disposition') is None:\n                # print part.as_string()\n                continue\n            fileName = part.get_filename()\n            if '.pdf' in fileName:\n                attach.append(part.get_payload(decode=True))\n    imapSession.close()\n    imapSession.logout()\nexcept:\n    print('Not able to download all attachments.')\nfor a in attach:\n    encoded_string = base64.b64encode(a)\n    url = \"https://api.ocr.space/parse/image\"\n\n    payload = {'language': 'eng',\n               'isOverlayRequired': 'false',\n               'base64Image': 'data:application/pdf;base64,' + encoded_string.decode(),\n               'iscreatesearchablepdf': 'false',\n               'issearchablepdfhidetextlayer': 'false'}\n    files = [\n\n    ]\n    headers = {\n        'apikey': sys.argv[4]\n    }\n\n    response = requests.request(\"POST\", url, headers=headers, data=payload, files=files)\n    data = response.json()\n    if response.status_code == 200:\n        if 'ParsedResults' in data.keys():\n            for text in data['ParsedResults']:\n                text_output += text['ParsedText'] + '/r/n'",
+              "script_arguments": [
+                "$workflow.definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb.input.variable_workflow_01VNNSRPVHTDN4fFJ7FnXgsguCJKEiTmvHU$",
+                "$workflow.definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb.input.variable_workflow_01VNNSRPVI5W2569QS7fBu3ZOPQeZSEQNnd$",
+                "$workflow.definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb.local.variable_workflow_01VNNSRPVHGU72yoATGMJWS5BRItqKQe24l$",
+                "$workflow.definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb.local.variable_workflow_01VNNSRPVGPZ90lBSeWGUWiCCkOkFbqX2hg$",
+                "$workflow.definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb.input.variable_workflow_01VNNSRPVFYXI5btx0YKoJr0WCL62TMFARG$"
+              ],
+              "script_queries": [
+                {
+                  "script_query": "text_output",
+                  "script_query_name": "pdf_text",
+                  "script_query_type": "string"
+                }
+              ],
+              "skip_execution": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01VNNSRU72LQJ5jsaeNMiZKEQziRRog4Pya",
+            "name": "Set Variables",
+            "title": "Set Output Text",
+            "type": "core.set_multiple_variables",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Set Output Text",
+              "skip_execution": false,
+              "variables_to_update": [
+                {
+                  "variable_to_update": "$workflow.definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb.output.variable_workflow_01VNNSRPVGCRR2dxhXjtYX19Fzierl7dWx5$",
+                  "variable_value_new": "$activity.definition_activity_01VNNSRT41LUG73MciwTVaJHuamKMlZjLJ6.output.script_queries.pdf_text$"
+                }
+              ]
+            },
+            "object_type": "definition_activity"
+          }
+        ],
+        "categories": [
+          "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+        ]
+      }
+    },
+    {
+      "workflow": {
+        "unique_name": "definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg",
+        "name": "Dev-Inspect Observables for Review",
+        "title": "Dev-Inspect Observables for Review",
+        "type": "generic.workflow",
+        "base_type": "workflow",
+        "variables": [
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "input",
+              "name": "Search String",
+              "type": "datatype.string",
+              "is_required": true,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPH7GU5obhrOG16g1IfYcCe0GijU",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "No Intel Data",
+              "scope": "local",
+              "name": "Intelligence Card Data",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "local",
+              "name": "Search Text",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPGLVH1lb58JI4m9pupXE8nVSW74",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "{\n    \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\",\n    \"type\": \"AdaptiveCard\",\n    \"version\": \"1.3\",\n    \"body\": [\n        {\n            \"type\": \"Container\",\n            \"items\": [\n                {\n                    \"type\": \"TextBlock\",\n                    \"size\": \"Medium\",\n                    \"weight\": \"Bolder\",\n                    \"text\": \"Discovered Observables Needing Review\"\n                },\n                {\n                    \"type\": \"TextBlock\",\n                    \"weight\": \"Bolder\",\n                    \"text\": \"Cisco SecureX Orchestration\",\n                    \"wrap\": true\n                },\n                {\n                    \"type\": \"TextBlock\",\n                    \"spacing\": \"None\",\n                    \"text\": \"\",\n                    \"isSubtle\": true,\n                    \"wrap\": true\n                },\n                {\n                    \"type\": \"TextBlock\",\n                    \"text\": \"The following observables have been discovered and passed through SecureX Threat Response to obtain known judgements. The details for each observable are provided below. Please review and determine the action required for each. Once the review is complete, click submit to have the applicable actions taken for each observable.\",\n                    \"wrap\": true\n                },\n                {\n            \"type\": \"FactSet\",\n            \"facts\": [\n                {\n                    \"title\": \"Source\",\n                    \"value\": \"\"\n                }\n            ]\n        },\n                {\n                    \"type\": \"TextBlock\",\n                    \"text\": \"Observables:\",\n                    \"size\": \"Medium\",\n                    \"weight\": \"Bolder\",\n                    \"wrap\": true\n                },\n                {\n                    \"type\": \"Container\",\n                    \"items\": [],\n                    \"padding\": \"None\"\n                },\n                {\n            \"type\": \"Input.Text\",\n            \"isVisible\": false,\n            \"value\": \"data\",\n            \"id\": \"response_card\"\n        },\n                {\n                  \"type\": \"ActionSet\",\n                  \"spacing\": \"Small\",\n                  \"actions\": [\n                      {\n                          \"type\": \"Action.Submit\",\n                          \"title\": \"Submit\"\n                      }\n                  ]\n              }\n            ]\n        }\n    ],\n    \"$schema\": \"http://adaptivecards.io/schemas/adaptive-card.json\"\n}",
+              "scope": "local",
+              "name": "Card Data",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPH0L62eeaBcKvPaURq8JLUxHTFK",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "input",
+              "name": "Operation Source",
+              "type": "datatype.string",
+              "is_required": true,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPGTJR6jEUlYKuapYNcfLenj1ZUP",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.boolean",
+            "properties": {
+              "value": false,
+              "scope": "local",
+              "name": "Updates to Post",
+              "type": "datatype.boolean",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPHNFW0XaCh8wPIXVgM7fTXql8mY",
+            "object_type": "variable_workflow"
+          },
+          {
+            "schema_id": "datatype.string",
+            "properties": {
+              "value": "",
+              "scope": "local",
+              "name": "Intelligence Data",
+              "type": "datatype.string",
+              "is_required": false,
+              "is_invisible": false
+            },
+            "unique_name": "variable_workflow_01VNNSRQPHFU11xuihsscBB7mzkd6zMeAyX",
+            "object_type": "variable_workflow"
+          }
+        ],
+        "properties": {
+          "atomic": {
+            "is_atomic": false
+          },
+          "delete_workflow_instance": false,
+          "display_name": "Dev-Inspect Observables for Review",
+          "runtime_user": {
+            "target_default": true
+          },
+          "target": {
+            "no_target": true
+          }
+        },
+        "object_type": "definition_workflow",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01VNNSS80MJO46RR2WQrdc0o7mamG9vo4RL",
+            "name": "Format Date",
+            "title": "Format Date",
+            "type": "core.format_date",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Format Date",
+              "format_string": "2006-01-02T15:04:05.999999999Z",
+              "original_date": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.output.start_time$",
+              "skip_execution": false,
+              "use_custom_format": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01VNNSS8ZVM883P9D3Oe2otYCwjcNucD0i1",
+            "name": "Format Date",
+            "title": "Format Card Date",
+            "type": "core.format_date",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Format Card Date",
+              "format_string": "Mon Jan _2 15:04:05 2006",
+              "original_date": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.output.start_time$",
+              "skip_execution": false,
+              "use_custom_format": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01VNNSSAJFPJK1aPa8JO6bGOnCH7Nk1aJZg",
+            "name": "Threat Response - Generate Access Token",
+            "title": "Threat Response - Generate Access Token",
+            "type": "workflow.atomic_workflow",
+            "base_type": "subworkflow",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Threat Response - Generate Access Token",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COTP8CXMN0JVKBa9RTBZek66BtyqWfh",
+                "target_type": "web-service.endpoint"
+              },
+              "workflow_id": "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH",
+              "workflow_name": "Threat Response - Generate Access Token"
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01VNNSSCA4MJM24P8qCPwPxPFtzjYr7aB0s",
+            "name": "Threat Response - Inspect for Observables",
+            "title": "Threat Response - Inspect for Observables",
+            "type": "workflow.atomic_workflow",
+            "base_type": "subworkflow",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Threat Response - Inspect for Observables",
+              "input": {
+                "variable_workflow_01PP7586F8ITB1sT6OpDzEF79wnWVOJk1N5": "$activity.definition_activity_01VNNSSAJFPJK1aPa8JO6bGOnCH7Nk1aJZg.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$",
+                "variable_workflow_01PP7586F8MQB2tFYbNgQC7xGbC7ZoXrOxR": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.input.variable_workflow_01VNNSRQPH7GU5obhrOG16g1IfYcCe0GijU$"
+              },
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COTHDZH1W6eSF3GAm4O7L3H9VEnU4zA",
+                "target_type": "web-service.endpoint"
+              },
+              "workflow_id": "definition_workflow_01PP7586MYQ913P0nWshTHMU7mQNNFG58Bv",
+              "workflow_name": "Threat Response - Inspect for Observables"
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01VNNSSDK71YL5SB55fjDnUb8CIb5CSCFGt",
+            "name": "Read Table from JSON",
+            "title": "Table Observables",
+            "type": "corejava.read_table_from_json",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": false,
+              "display_name": "Table Observables",
+              "input_json": "$activity.definition_activity_01VNNSSCA4MJM24P8qCPwPxPFtzjYr7aB0s.output.variable_workflow_01PP7586F8O067JBDnBPz8ZD5XctKNSenEX$",
+              "jsonpath_query": "$.[*]",
+              "persist_output": false,
+              "populate_columns": false,
+              "skip_execution": false,
+              "table_columns": [
+                {
+                  "column_name": "type",
+                  "column_type": "string"
+                },
+                {
+                  "column_name": "value",
+                  "column_type": "string"
+                }
+              ]
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU",
+            "name": "For Each",
+            "title": "For Each",
+            "type": "logic.for_each",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "For Each",
+              "skip_execution": false,
+              "source_array": "$activity.definition_activity_01VNNSSDK71YL5SB55fjDnUb8CIb5CSCFGt.output.read_table_from_json$"
+            },
+            "object_type": "definition_activity",
+            "actions": [
+              {
+                "unique_name": "definition_activity_01VNNSSH4ZQ9Z1ZyLBChCcJsCTRT0OPHsc5",
+                "name": "Threat Response - Deliberate Observable",
+                "title": "Threat Response - Deliberate Observable",
+                "type": "workflow.atomic_workflow",
+                "base_type": "subworkflow",
+                "properties": {
+                  "continue_on_failure": false,
+                  "display_name": "Threat Response - Deliberate Observable",
+                  "input": {
+                    "variable_workflow_01PP77MLJ2S465LuOvU8mlP8mbbcgy9uTXN": "$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].type$",
+                    "variable_workflow_01PP77MLJ2XIE1H3D67PjcsCuGBsKCCBxLI": "$activity.definition_activity_01VNNSSAJFPJK1aPa8JO6bGOnCH7Nk1aJZg.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$",
+                    "variable_workflow_01PP77MLJ2ZVU1C4VxEfKYh2tlFk9iTx69p": "$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].value$"
+                  },
+                  "runtime_user": {
+                    "target_default": true
+                  },
+                  "skip_execution": false,
+                  "target": {
+                    "override_workflow_target": true,
+                    "target_id": "definition_target_01K5COTHDZH1W6eSF3GAm4O7L3H9VEnU4zA",
+                    "target_type": "web-service.endpoint"
+                  },
+                  "workflow_id": "definition_workflow_01PP77MLQ4QAG765OwlT0ZDqBzv80HvYuPC",
+                  "workflow_name": "Threat Response - Deliberate Observable"
+                },
+                "object_type": "definition_activity"
+              },
+              {
+                "unique_name": "definition_activity_01VNNSSIRR9366eNvm2wqV4cju24PM0Tmse",
+                "name": "Select from Table",
+                "title": "Select from Table",
+                "type": "core.selectfromtable",
+                "base_type": "activity",
+                "properties": {
+                  "action_timeout": 180,
+                  "continue_on_failure": false,
+                  "display_name": "Select from Table",
+                  "input_table": "$global.variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG.global.variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG$",
+                  "number_of_rows": {
+                    "all_rows": true
+                  },
+                  "persist_output": false,
+                  "skip_execution": false,
+                  "sorting": {
+                    "no_sort": true
+                  },
+                  "where_clause": "observable_value == '$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].value$' AND decision != 'Approval Required'"
+                },
+                "object_type": "definition_activity"
+              },
+              {
+                "unique_name": "definition_activity_01VNNSSKAFFGL3UnylozOEOaSUQ6XTdWtDt",
+                "name": "Condition Block",
+                "title": "If Observable",
+                "type": "logic.if_else",
+                "base_type": "activity",
+                "properties": {
+                  "continue_on_failure": false,
+                  "display_name": "If Observable",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "blocks": [
+                  {
+                    "unique_name": "definition_activity_01VNNSSL5R9D438Pc5JGCj8GrvA6PjWS5x2",
+                    "name": "Condition Branch",
+                    "title": "Not Already Seen",
+                    "type": "logic.condition_block",
+                    "base_type": "activity",
+                    "properties": {
+                      "condition": {
+                        "left_operand": "$activity.definition_activity_01VNNSSIRR9366eNvm2wqV4cju24PM0Tmse.output.row_count$",
+                        "operator": "eq",
+                        "right_operand": 0
+                      },
+                      "continue_on_failure": false,
+                      "display_name": "Not Already Seen",
+                      "skip_execution": false
+                    },
+                    "object_type": "definition_activity",
+                    "actions": [
+                      {
+                        "unique_name": "definition_activity_01VNNSSM4WJNJ31VR2OfyGJDSizYwcsnJZe",
+                        "name": "Set Variables",
+                        "title": "Open UL",
+                        "type": "core.set_multiple_variables",
+                        "base_type": "activity",
+                        "properties": {
+                          "continue_on_failure": false,
+                          "display_name": "Open UL",
+                          "skip_execution": false,
+                          "variables_to_update": [
+                            {
+                              "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$",
+                              "variable_value_new": "\u003cul style=\"list-style-type:none\"\u003e"
+                            }
+                          ]
+                        },
+                        "object_type": "definition_activity"
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSN3UW3G24NLJ4wEr4S6An5EHoHEqj",
+                        "name": "Read Table from JSON",
+                        "title": "Read Table from JSON",
+                        "type": "corejava.read_table_from_json",
+                        "base_type": "activity",
+                        "properties": {
+                          "action_timeout": 180,
+                          "continue_on_failure": true,
+                          "display_name": "Read Table from JSON",
+                          "input_json": "$activity.definition_activity_01VNNSSH4ZQ9Z1ZyLBChCcJsCTRT0OPHsc5.output.variable_workflow_01PP77MLJ2YP16I3dokFSakNWpxSLCwzNcu$",
+                          "jsonpath_query": "$.data[?(@.data.verdicts.count \u003e 0)]",
+                          "persist_output": false,
+                          "populate_columns": false,
+                          "skip_execution": false,
+                          "table_columns": [
+                            {
+                              "column_name": "module",
+                              "column_type": "string"
+                            },
+                            {
+                              "column_name": "data",
+                              "column_type": "string"
+                            }
+                          ]
+                        },
+                        "object_type": "definition_activity"
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSOFUFOT7cv30yaXxrhhb7Wqk3OAkZ",
+                        "name": "Condition Block",
+                        "title": "If Dispositions",
+                        "type": "logic.if_else",
+                        "base_type": "activity",
+                        "properties": {
+                          "continue_on_failure": false,
+                          "display_name": "If Dispositions",
+                          "skip_execution": false
+                        },
+                        "object_type": "definition_activity",
+                        "blocks": [
+                          {
+                            "unique_name": "definition_activity_01VNNSSPDTXLS2xc1AbMFMgo8dznGcgYySt",
+                            "name": "Condition Branch",
+                            "title": "Found",
+                            "type": "logic.condition_block",
+                            "base_type": "activity",
+                            "properties": {
+                              "condition": {
+                                "left_operand": "$activity.definition_activity_01VNNSSN3UW3G24NLJ4wEr4S6An5EHoHEqj.output.succeeded$",
+                                "operator": "eq",
+                                "right_operand": true
+                              },
+                              "continue_on_failure": false,
+                              "display_name": "Found",
+                              "skip_execution": false
+                            },
+                            "object_type": "definition_activity",
+                            "actions": [
+                              {
+                                "unique_name": "definition_activity_01VNNSSQHY2WC4UbDgSnTIoTuGpmOOelZBc",
+                                "name": "Set Variables",
+                                "title": "Clear Intelligence",
+                                "type": "core.set_multiple_variables",
+                                "base_type": "activity",
+                                "properties": {
+                                  "continue_on_failure": false,
+                                  "display_name": "Clear Intelligence",
+                                  "skip_execution": false,
+                                  "variables_to_update": [
+                                    {
+                                      "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$",
+                                      "variable_value_new": ""
+                                    }
+                                  ]
+                                },
+                                "object_type": "definition_activity"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSRFCRYI2nn7mTkg3MEzoPsNFGVsYF",
+                        "name": "For Each",
+                        "title": "For Each",
+                        "type": "logic.for_each",
+                        "base_type": "activity",
+                        "properties": {
+                          "continue_on_failure": true,
+                          "display_name": "For Each",
+                          "skip_execution": false,
+                          "source_array": "$activity.definition_activity_01VNNSSN3UW3G24NLJ4wEr4S6An5EHoHEqj.output.read_table_from_json$"
+                        },
+                        "object_type": "definition_activity",
+                        "actions": [
+                          {
+                            "unique_name": "definition_activity_01VNNSST7Z4D45pmO8cUe52hXCx2jPZnflk",
+                            "name": "JSONPath Query",
+                            "title": "JSONPath Query",
+                            "type": "corejava.jsonpathquery",
+                            "base_type": "activity",
+                            "properties": {
+                              "action_timeout": 180,
+                              "continue_on_failure": false,
+                              "display_name": "JSONPath Query",
+                              "input_json": "$activity.definition_activity_01VNNSSRFCRYI2nn7mTkg3MEzoPsNFGVsYF.input.source_array[@].data$",
+                              "jsonpath_queries": [
+                                {
+                                  "jsonpath_query": "$.verdicts.docs[*].disposition_name",
+                                  "jsonpath_query_name": "disposition",
+                                  "jsonpath_query_type": "string"
+                                }
+                              ],
+                              "skip_execution": false
+                            },
+                            "object_type": "definition_activity"
+                          },
+                          {
+                            "unique_name": "definition_activity_01VNNSSU9ZX0W2oWbs3dqxbNa7GnNI3e5t9",
+                            "name": "Set Variables",
+                            "title": "Set Intelligence",
+                            "type": "core.set_multiple_variables",
+                            "base_type": "activity",
+                            "properties": {
+                              "continue_on_failure": false,
+                              "display_name": "Set Intelligence",
+                              "skip_execution": false,
+                              "variables_to_update": [
+                                {
+                                  "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPHFU11xuihsscBB7mzkd6zMeAyX$",
+                                  "variable_value_new": "\u003cli\u003e$activity.definition_activity_01VNNSSRFCRYI2nn7mTkg3MEzoPsNFGVsYF.input.source_array[@].module$ : $activity.definition_activity_01VNNSST7Z4D45pmO8cUe52hXCx2jPZnflk.output.jsonpath_queries.disposition$\u003c/li\u003e"
+                                },
+                                {
+                                  "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$",
+                                  "variable_value_new": "$activity.definition_activity_01VNNSSRFCRYI2nn7mTkg3MEzoPsNFGVsYF.input.source_array[@].module$ : $activity.definition_activity_01VNNSST7Z4D45pmO8cUe52hXCx2jPZnflk.output.jsonpath_queries.disposition$ \\n"
+                                }
+                              ]
+                            },
+                            "object_type": "definition_activity"
+                          }
+                        ]
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSVH3FR94FNdMj0wvTIAuPWs1aPHgf",
+                        "name": "Set Variables",
+                        "title": "Close UL",
+                        "type": "core.set_multiple_variables",
+                        "base_type": "activity",
+                        "properties": {
+                          "continue_on_failure": false,
+                          "display_name": "Close UL",
+                          "skip_execution": false,
+                          "variables_to_update": [
+                            {
+                              "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$",
+                              "variable_value_new": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$ \u003c/ul\u003e"
+                            }
+                          ]
+                        },
+                        "object_type": "definition_activity"
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSWNQVKJ1zHkhRc2APJRvemwSkLgqz",
+                        "name": "Add Row to Table",
+                        "title": "Update Seen Observable",
+                        "type": "core.addrowtotable",
+                        "base_type": "activity",
+                        "properties": {
+                          "action_timeout": 180,
+                          "continue_on_failure": false,
+                          "display_name": "Update Seen Observable",
+                          "input_table": "$global.variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG.global.variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG$",
+                          "row": [
+                            {
+                              "key": "observable_type",
+                              "type": "string",
+                              "value": "$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].type$"
+                            },
+                            {
+                              "key": "observable_value",
+                              "type": "string",
+                              "value": "$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].value$"
+                            },
+                            {
+                              "key": "decision",
+                              "type": "string",
+                              "value": "Approval Required"
+                            },
+                            {
+                              "key": "reviewer",
+                              "type": "string"
+                            },
+                            {
+                              "key": "reviewed_timestamp",
+                              "type": "date"
+                            },
+                            {
+                              "key": "first_seen",
+                              "type": "date",
+                              "value": "$activity.definition_activity_01VNNSS80MJO46RR2WQrdc0o7mamG9vo4RL.output.result$"
+                            },
+                            {
+                              "key": "source",
+                              "type": "string",
+                              "value": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$"
+                            }
+                          ],
+                          "skip_execution": false
+                        },
+                        "object_type": "definition_activity"
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSXUEHUD7llwuXTwVSahkFX81nfMMI",
+                        "name": "Execute Python Script",
+                        "title": "Update Observable Card",
+                        "type": "python3.script",
+                        "base_type": "activity",
+                        "properties": {
+                          "action_timeout": 180,
+                          "continue_on_failure": false,
+                          "display_name": "Update Observable Card",
+                          "script": "import json\nimport sys\n\ncard = json.loads(sys.argv[1])\nob_value = sys.argv[2]\naction_value = ob_value\nob_type = sys.argv[3]\naction_type = ob_type\nob_source = sys.argv[4]\nfirst_seen = sys.argv[5]\nintel = sys.argv[6]\n\ncard['body'][0]['items'][2]['text'] = first_seen\n\ncard['body'][0]['items'][4]['facts'][0]['value'] = ob_source\n\ncard['body'][0]['items'][6]['items'].append({\n    \"type\": \"TextBlock\",\n    \"text\": ob_value,\n    \"wrap\": True,\n    \"weight\": \"Bolder\"\n})\ncard['body'][0]['items'][6]['items'].append({\n                            \"type\": \"FactSet\",\n                            \"facts\": [\n                                {\n                                    \"title\": \"Observable Type\",\n                                    \"value\": ob_type.capitalize()\n                                },\n                                {\n                                    \"title\": \"Threat Response Verdict\",\n                                    \"value\": intel\n                                }\n                            ]\n                        })\ncard['body'][0]['items'][6]['items'].append({\n    \"type\": \"Input.ChoiceSet\",\n    \"id\": action_value + '_' + action_type,\n    \"choices\": [\n        {\n            \"title\": \"Block\",\n            \"value\": \"block\"\n        },\n        {\n            \"title\": \"Allow\",\n            \"value\": \"allow\"\n        },\n        {\n            \"title\": \"Add Exclusion\",\n            \"value\": \"exclude\"\n        }\n    ],\n    \"placeholder\": \"Select Action for: \" + ob_value\n})\ndata = json.dumps(card)",
+                          "script_arguments": [
+                            "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPH0L62eeaBcKvPaURq8JLUxHTFK$",
+                            "$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].value$",
+                            "$activity.definition_activity_01VNNSSEWNTIY3f5LcPlt4NGwWaiyXfVHKU.input.source_array[@].type$",
+                            "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.input.variable_workflow_01VNNSRQPGTJR6jEUlYKuapYNcfLenj1ZUP$",
+                            "$activity.definition_activity_01VNNSS8ZVM883P9D3Oe2otYCwjcNucD0i1.output.result$",
+                            "$activity.definition_activity_01VNNSSH4ZQ9Z1ZyLBChCcJsCTRT0OPHsc5.output.variable_workflow_01PP77MLJ2W9N3jUUa3J6gIRy7Dydhs937R$"
+                          ],
+                          "script_queries": [
+                            {
+                              "script_query": "data",
+                              "script_query_name": "Teams Card JSON",
+                              "script_query_type": "string"
+                            }
+                          ],
+                          "skip_execution": false
+                        },
+                        "object_type": "definition_activity"
+                      },
+                      {
+                        "unique_name": "definition_activity_01VNNSSZ2C23T7TYqFxHdFPP3QhWzE4EP5O",
+                        "name": "Set Variables",
+                        "title": "Update Variables",
+                        "type": "core.set_multiple_variables",
+                        "base_type": "activity",
+                        "properties": {
+                          "continue_on_failure": false,
+                          "display_name": "Update Variables",
+                          "skip_execution": false,
+                          "variables_to_update": [
+                            {
+                              "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPG9LW4XwlqxyrQzCurxBFCe3Liv$",
+                              "variable_value_new": "No Intel Data"
+                            },
+                            {
+                              "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPHFU11xuihsscBB7mzkd6zMeAyX$",
+                              "variable_value_new": ""
+                            },
+                            {
+                              "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPH0L62eeaBcKvPaURq8JLUxHTFK$",
+                              "variable_value_new": "$activity.definition_activity_01VNNSSXUEHUD7llwuXTwVSahkFX81nfMMI.output.script_queries.Teams Card JSON$"
+                            },
+                            {
+                              "variable_to_update": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPHNFW0XaCh8wPIXVgM7fTXql8mY$",
+                              "variable_value_new": true
+                            }
+                          ]
+                        },
+                        "object_type": "definition_activity"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "unique_name": "definition_activity_01VNNST060K956EF1vxbE3IuqDdhE79hc5i",
+            "name": "Condition Block",
+            "title": "Updates to Post",
+            "type": "logic.if_else",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Updates to Post",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "blocks": [
+              {
+                "unique_name": "definition_activity_01VNNST184WJB2bP8EJd4LSTladErcu7DHp",
+                "name": "Condition Branch",
+                "title": "True",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPHNFW0XaCh8wPIXVgM7fTXql8mY$",
+                    "operator": "eq",
+                    "right_operand": true
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "True",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01VNNST3HD2N86xdjZ3YtkxyctlSCXYmvx6",
+                    "name": "Post Teams Card",
+                    "title": "Post Teams Card",
+                    "type": "workflow.sub_workflow",
+                    "base_type": "subworkflow",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "Post Teams Card",
+                      "input": {
+                        "variable_workflow_01VNNSRRTNDCY1vTRxEiMUa1oKwWE5KPviZ": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.local.variable_workflow_01VNNSRQPH0L62eeaBcKvPaURq8JLUxHTFK$"
+                      },
+                      "runtime_user": {
+                        "target_default": true
+                      },
+                      "skip_execution": false,
+                      "target": {
+                        "execute_on_this_target": true,
+                        "target_id": "definition_target_01UVS7JJQBK4C1oaUIzyAcy8bwAUom7f0eE",
+                        "target_type": "web-service.endpoint"
+                      },
+                      "workflow_id": "definition_workflow_01VNNSRRN7WI32mt9tudY7rn9H0nur86KyH",
+                      "workflow_name": "Dev-Post to Teams Bot"
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "unique_name": "definition_activity_01VNNST5HB0BZ3cyQ4JbgzcDXikDawQbzkC",
+            "name": "Send Threat Observable Email",
+            "title": "Send Threat Observable Email",
+            "type": "workflow.sub_workflow",
+            "base_type": "subworkflow",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "Send Threat Observable Email",
+              "input": {
+                "variable_workflow_01VNNSRSC6A212iC9H4HDwBBVJjrxH39T0i": "$workflow.definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg.input.variable_workflow_01VNNSRQPGTJR6jEUlYKuapYNcfLenj1ZUP$"
+              },
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": true,
+              "target": {
+                "no_target": true
+              },
+              "workflow_id": "definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2",
+              "workflow_name": "Dev-Send Threat Observable Email"
+            },
+            "object_type": "definition_activity"
+          }
+        ],
+        "categories": [
+          "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+        ]
+      },
+      "subworkflows": [
+        {
+          "workflow": {
+            "unique_name": "definition_workflow_01VNNSRRN7WI32mt9tudY7rn9H0nur86KyH",
+            "name": "Dev-Post to Teams Bot",
+            "title": "Dev-Post to Teams Bot",
+            "type": "generic.workflow",
+            "base_type": "workflow",
+            "variables": [
+              {
+                "schema_id": "datatype.string",
+                "properties": {
+                  "value": "",
+                  "scope": "input",
+                  "name": "Card Data",
+                  "type": "datatype.string",
+                  "is_required": true,
+                  "is_invisible": false
+                },
+                "unique_name": "variable_workflow_01VNNSRRTNDCY1vTRxEiMUa1oKwWE5KPviZ",
+                "object_type": "variable_workflow"
+              }
+            ],
+            "properties": {
+              "atomic": {
+                "is_atomic": false
+              },
+              "delete_workflow_instance": false,
+              "display_name": "Dev-Post to Teams Bot",
+              "runtime_user": {
+                "target_default": true
+              },
+              "target": {
+                "target_type": "web-service.endpoint",
+                "target_id": "definition_target_01UVS7JJQBK4C1oaUIzyAcy8bwAUom7f0eE",
+                "execute_on_workflow_target": true
+              }
+            },
+            "object_type": "definition_workflow",
+            "actions": [
+              {
+                "unique_name": "definition_activity_01VNNSRTSDCDY1nIa3RCtuaFbXBOwaPql1u",
+                "name": "HTTP Request",
+                "title": "Post Card to Notify Bot",
+                "type": "web-service.http_request",
+                "base_type": "activity",
+                "properties": {
+                  "action_timeout": 180,
+                  "allow_auto_redirect": true,
+                  "body": "$workflow.definition_workflow_01VNNSRRN7WI32mt9tudY7rn9H0nur86KyH.input.variable_workflow_01VNNSRRTNDCY1vTRxEiMUa1oKwWE5KPviZ$",
+                  "content_type": "application/json",
+                  "continue_on_error_status_code": false,
+                  "continue_on_failure": false,
+                  "custom_headers": [
+                    {
+                      "name": "BotID",
+                      "value": "f8b66946-b549-400b-8d28-6a59a57788d1"
+                    }
+                  ],
+                  "display_name": "Post Card to Notify Bot",
+                  "method": "POST",
+                  "relative_url": "/api/notify",
+                  "runtime_user": {
+                    "target_default": true
+                  },
+                  "skip_execution": false,
+                  "target": {
+                    "use_workflow_target": true
+                  }
+                },
+                "object_type": "definition_activity"
+              }
+            ],
+            "categories": [
+              "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+            ]
+          }
+        },
+        {
+          "workflow": {
+            "unique_name": "definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2",
+            "name": "Dev-Send Threat Observable Email",
+            "title": "Dev-Send Threat Observable Email",
+            "type": "generic.workflow",
+            "base_type": "workflow",
+            "variables": [
+              {
+                "schema_id": "datatype.string",
+                "properties": {
+                  "value": "",
+                  "scope": "input",
+                  "name": "source",
+                  "type": "datatype.string",
+                  "is_required": true,
+                  "is_invisible": false
+                },
+                "unique_name": "variable_workflow_01VNNSRSC6A212iC9H4HDwBBVJjrxH39T0i",
+                "object_type": "variable_workflow"
+              },
+              {
+                "schema_id": "datatype.string",
+                "properties": {
+                  "value": "\u003c!DOCTYPE html PUBLIC “-//W3C//DTD XHTML 1.0 Transitional//EN” “https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd”\u003e\n\u003chtml xmlns=“https://www.w3.org/1999/xhtml”\u003e\n\u003chead\u003e\n\u003ctitle\u003eTest Email Sample\u003c/title\u003e\n\u003cmeta http–equiv=“Content-Type” content=“text/html; charset=UTF-8” /\u003e\n\u003cmeta http–equiv=“X-UA-Compatible” content=“IE=edge” /\u003e\n\u003cmeta name=“viewport” content=“width=device-width, initial-scale=1.0 “ /\u003e\n\u003cstyle\u003e\n.hidden-radio{\n \ndisplay:inline-block;\n \nopacity:0;\n \nwidth:0;\n \nheight:0;\n \nmargin:0 -9999px 0 0;\n \nfloat:right;\n \nposition:absolute;\n}\ninput:focus + .button{\n \noutline: Highlight auto\n \n2px;\n \noutline:\n \n-webkit-focus-ring-color\n \nauto 5px;\n \n}\n.button{\n \n/* style */\n \n}\n \n.button:hover,\n \ninput:focus + .button{\n \n/* style */\n \n}\n \ninput:checked + .button{\n \n/* style */\n \n}\ntr:hover {background-color: #abadb0;}\ntr {\n  border-bottom: 1px solid #ddd;\n}\ntr:nth-child(even) {\n  background-color: #cdd0d4;\n}\n\u003c/style\u003e\n\u003c/head\u003e\n\u003cbody\u003e\n\u003ch1\u003eDiscovered Observables\u003c/h1\u003e\n\u003cform method=\"post\" action=\"https://securex-ao.us.security.cisco.com/webhooks/01SOJTZC005QZ05Vw5gU8c0rMRz4dsIz8RS?api_key=dUaXuqMvkAhsMF9OuM4bA3p1hgB0C0NsEL8Si4J6COKpPvLhsieouL8c8i//qSV0RCsv32yWItE2P3DsQRzKYcnPVMzwIUOSL5kamqE596b1vIN+NNv11XLL89sAtBsZ5SHhVq/+hKEkkWrrM4CrV9g8ex/0cwcehVUXF9m6BjE=\" class=\"inline\"\u003e\n\u003ctable style=\"width:80%\"\u003e\n\u003ctr\u003e\n\u003cth\u003e\nObservable\n\u003c/th\u003e\n\u003cth\u003e\nType\n\u003c/th\u003e\n\u003cth\u003e\nIntelligence Judgements\n\u003c/th\u003e\n\u003cth\u003e\nSource\n\u003c/th\u003e\n\u003cth\u003e\nFirst Seen\n\u003c/th\u003e\n\u003cth\u003e\nBlock\n\u003c/th\u003e\n\u003cth\u003e\nAllow\n\u003c/th\u003e\n\u003cth\u003e\nAdd to Exclusion\n\u003c/th\u003e\n\u003c/tr\u003e",
+                  "scope": "local",
+                  "name": "Base Email Template",
+                  "type": "datatype.string",
+                  "is_required": false,
+                  "is_invisible": false
+                },
+                "unique_name": "variable_workflow_01VNNSRSC72670M6gKviIsyWvc3B2RUcv08",
+                "object_type": "variable_workflow"
+              },
+              {
+                "schema_id": "datatype.string",
+                "properties": {
+                  "value": "\u003cbutton type=\"submit\"\u003eSubmit\u003c/button\u003e\n\u003c/table\u003e\n\u003c/form\u003e\n\u003c/body\u003e",
+                  "scope": "local",
+                  "name": "Email Footer",
+                  "type": "datatype.string",
+                  "is_required": false,
+                  "is_invisible": false
+                },
+                "unique_name": "variable_workflow_01VNNSRSC6PLR3zxsAjhAM3dQgHdJWKrLUe",
+                "object_type": "variable_workflow"
+              }
+            ],
+            "properties": {
+              "atomic": {
+                "is_atomic": false
+              },
+              "delete_workflow_instance": false,
+              "display_name": "Dev-Send Threat Observable Email",
+              "runtime_user": {
+                "target_default": true
+              },
+              "target": {
+                "no_target": true
+              }
+            },
+            "object_type": "definition_workflow",
+            "actions": [
+              {
+                "unique_name": "definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5",
+                "name": "For Each",
+                "title": "For Each",
+                "type": "logic.for_each",
+                "base_type": "activity",
+                "properties": {
+                  "continue_on_failure": false,
+                  "display_name": "For Each",
+                  "skip_execution": false,
+                  "source_array": "$global.variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG.global.variable_01UOXUF0T9KSY3SHuJ8KUX0WkptBP4zQigG$"
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01VNNSRWAHQ7V5t8czI95FNII2pvXtPyQIn",
+                    "name": "Condition Block",
+                    "title": "init",
+                    "type": "logic.if_else",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "init",
+                      "skip_execution": false
+                    },
+                    "object_type": "definition_activity",
+                    "blocks": [
+                      {
+                        "unique_name": "definition_activity_01VNNSRX728KM6j9do7tRRa0NODBICbVUB0",
+                        "name": "Condition Branch",
+                        "title": "Condition Branch",
+                        "type": "logic.condition_block",
+                        "base_type": "activity",
+                        "properties": {
+                          "condition": {
+                            "left_operand": "$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$",
+                            "operator": "eq",
+                            "right_operand": "init"
+                          },
+                          "continue_on_failure": false,
+                          "display_name": "Condition Branch",
+                          "skip_execution": false
+                        },
+                        "object_type": "definition_activity",
+                        "actions": [
+                          {
+                            "unique_name": "definition_activity_01VNNSRYJSCLJ3pwzVNG9NaBSZqUYrOMP3m",
+                            "name": "Continue",
+                            "title": "Skip",
+                            "type": "logic.continue",
+                            "base_type": "activity",
+                            "properties": {
+                              "continue_on_failure": false,
+                              "display_name": "Skip",
+                              "skip_execution": false
+                            },
+                            "object_type": "definition_activity"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "unique_name": "definition_activity_01VNNSRZD7U9704l1oh7bqvuRrIqJtQpxoF",
+                    "name": "Condition Block",
+                    "title": "Condition Block",
+                    "type": "logic.if_else",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "Condition Block",
+                      "skip_execution": false
+                    },
+                    "object_type": "definition_activity",
+                    "blocks": [
+                      {
+                        "unique_name": "definition_activity_01VNNSS0A4AJT5DcTupqWuMBbvrYewC2qiN",
+                        "name": "Condition Branch",
+                        "title": "Condition Branch",
+                        "type": "logic.condition_block",
+                        "base_type": "activity",
+                        "properties": {
+                          "condition": {
+                            "left_operand": "$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].decision$",
+                            "operator": "eq",
+                            "right_operand": "Approval Required"
+                          },
+                          "continue_on_failure": false,
+                          "display_name": "Condition Branch",
+                          "skip_execution": false
+                        },
+                        "object_type": "definition_activity",
+                        "actions": [
+                          {
+                            "unique_name": "definition_activity_01VNNSS1IM89C4OH5uNWbY0utvpU51mbAaI",
+                            "name": "Format Date",
+                            "title": "Get First Seen Date",
+                            "type": "core.format_date",
+                            "base_type": "activity",
+                            "properties": {
+                              "continue_on_failure": false,
+                              "display_name": "Get First Seen Date",
+                              "format_string": "02 Jan 06 15:04 MST",
+                              "original_date": "$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].first_seen$",
+                              "skip_execution": false,
+                              "use_custom_format": false
+                            },
+                            "object_type": "definition_activity"
+                          },
+                          {
+                            "unique_name": "definition_activity_01VNNSS2J1QEV42yK8RxeNIZOUwaLJZ87wj",
+                            "name": "Set Variables",
+                            "title": "Update Email Table",
+                            "type": "core.set_multiple_variables",
+                            "base_type": "activity",
+                            "properties": {
+                              "continue_on_failure": false,
+                              "display_name": "Update Email Table",
+                              "skip_execution": false,
+                              "variables_to_update": [
+                                {
+                                  "variable_to_update": "$workflow.definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2.local.variable_workflow_01VNNSRSC72670M6gKviIsyWvc3B2RUcv08$",
+                                  "variable_value_new": "$workflow.definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2.local.variable_workflow_01VNNSRSC72670M6gKviIsyWvc3B2RUcv08$\n\u003ctr\u003e\n\u003ctd style=\"text-decoration: none;\"\u003e$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$ \u003c/td\u003e\n\u003ctd\u003e $activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_type$ \u003c/td\u003e\n\u003ctd\u003e $activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].source$ \u003c/td\u003e\n\u003ctd style=\"text-decoration: none;\"\u003e$workflow.definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2.input.variable_workflow_01VNNSRSC6A212iC9H4HDwBBVJjrxH39T0i$\u003c/td\u003e\n\u003ctd\u003e $activity.definition_activity_01VNNSS1IM89C4OH5uNWbY0utvpU51mbAaI.output.result$ \u003c/td\u003e\n\u003ctd\u003e\u003cinput type=radio id=\"block_$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$\" name=\"$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$_$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_type$\" value=\"block\"\u003e\u003c/td\u003e\n\u003ctd\u003e\u003cinput type=radio id=\"allow_$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$\" name=\"$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$_$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_type$\" value=\"allow\"\u003e\u003c/td\u003e\n\u003ctd\u003e\u003cinput type=radio id=\"exception_$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$\" name=\"$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_value$_$activity.definition_activity_01VNNSRUQ4I7J4aBTepVUQwqUgTYUM0ukM5.input.source_array[@].observable_type$\" value=\"exception\"\u003e\u003c/td\u003e\n\u003c/td\u003e\n\u003c/tr\u003e"
+                                }
+                              ]
+                            },
+                            "object_type": "definition_activity"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "unique_name": "definition_activity_01VNNSS4E2O2E4XTtOiafWUig2V11dN07jw",
+                "name": "Send Email",
+                "title": "Send Email",
+                "type": "email.smtp_send_email",
+                "base_type": "activity",
+                "properties": {
+                  "action_timeout": 180,
+                  "body": "$workflow.definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2.local.variable_workflow_01VNNSRSC72670M6gKviIsyWvc3B2RUcv08$\n$workflow.definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2.local.variable_workflow_01VNNSRSC6PLR3zxsAjhAM3dQgHdJWKrLUe$",
+                  "continue_if_one_address_valid": false,
+                  "continue_on_failure": false,
+                  "display_name": "Send Email",
+                  "html": true,
+                  "runtime_user": {
+                    "target_default": true
+                  },
+                  "skip_execution": false,
+                  "subject": "Intelligence Observable Update",
+                  "target": {
+                    "override_workflow_target": true,
+                    "target_id": "definition_target_01K5COUSEPCVI7HcW6n8hSBVpr1kghgrMob"
+                  },
+                  "to": "brennan@dev-labs.ninja"
+                },
+                "object_type": "definition_activity"
+              }
+            ],
+            "categories": [
+              "category_1BMfMXSnJMyt5Ihqi7rWJr5N8cf"
+            ]
+          }
+        }
+      ],
+      "dependent_workflows": [
+        "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH",
+        "definition_workflow_01PP7586MYQ913P0nWshTHMU7mQNNFG58Bv",
+        "definition_workflow_01PP77MLQ4QAG765OwlT0ZDqBzv80HvYuPC",
+        "definition_workflow_01VNNSRRN7WI32mt9tudY7rn9H0nur86KyH",
+        "definition_workflow_01VNNSRS497S53mUYo9EHgFDC7C4Ab4fBO2"
+      ]
+    }
+  ],
+  "atomic_workflows": [
+    "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH",
+    "definition_workflow_01PP7586MYQ913P0nWshTHMU7mQNNFG58Bv",
+    "definition_workflow_01PP77MLQ4QAG765OwlT0ZDqBzv80HvYuPC"
+  ],
+  "dependent_workflows": [
+    "definition_workflow_01VNNSRPKYUNO3O9YGrg4nZ87wuChhovGKb",
+    "definition_workflow_01VNNSRQHPE231ohprQDpqSYVEqkJMZaUvg"
+  ]
+}
