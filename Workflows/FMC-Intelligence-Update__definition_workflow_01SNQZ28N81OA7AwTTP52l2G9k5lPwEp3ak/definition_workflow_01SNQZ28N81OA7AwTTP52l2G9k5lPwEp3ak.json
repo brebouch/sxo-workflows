@@ -23,21 +23,21 @@
         "schema_id": "datatype.string",
         "properties": {
           "value": "",
-          "scope": "input",
-          "name": "observable_type",
+          "scope": "local",
+          "name": "Domain Indicator",
           "type": "datatype.string",
-          "is_required": true,
+          "is_required": false,
           "is_invisible": false
         },
-        "unique_name": "variable_workflow_01SNQZS7ULO2R25TuODu02WydNHanxWBzdJ",
+        "unique_name": "variable_workflow_01SNRCZLGPAKQ6BET6PTlzJTrZfSouUZquz",
         "object_type": "variable_workflow"
       },
       {
         "schema_id": "datatype.string",
         "properties": {
-          "value": "https://private.intel.amp.cisco.com/ctia/feed/feed-da2c25d6-473b-4cca-ac7e-6be66f59063e/view.txt?s=1f2199e1-044d-4638-8ab0-9798cbe5188e",
+          "value": "",
           "scope": "local",
-          "name": "IP Feed",
+          "name": "IP Indicator",
           "type": "datatype.string",
           "is_required": false,
           "is_invisible": false
@@ -48,14 +48,14 @@
       {
         "schema_id": "datatype.string",
         "properties": {
-          "value": "https://private.intel.amp.cisco.com/ctia/feed/feed-62f5e50f-eac4-46c5-a3a8-0f76ce3e7d6c/view.txt?s=5e813ae0-e93c-4390-bec0-6bb31b63bde2",
-          "scope": "local",
-          "name": "Domain Feed",
+          "value": "",
+          "scope": "input",
+          "name": "observable_type",
           "type": "datatype.string",
-          "is_required": false,
+          "is_required": true,
           "is_invisible": false
         },
-        "unique_name": "variable_workflow_01SNRCZLGPAKQ6BET6PTlzJTrZfSouUZquz",
+        "unique_name": "variable_workflow_01SNQZS7ULO2R25TuODu02WydNHanxWBzdJ",
         "object_type": "variable_workflow"
       }
     ],
@@ -92,9 +92,787 @@
             "target_id": "definition_target_01K5COTP8CXMN0JVKBa9RTBZek66BtyqWfh",
             "target_type": "web-service.endpoint"
           },
-          "workflow_id": "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH"
+          "workflow_id": "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH",
+          "workflow_name": "Threat Response - Generate Access Token"
         },
         "object_type": "definition_activity"
+      },
+      {
+        "unique_name": "definition_activity_01WT8MAWXZG2E78GkZQLvl2s3zgUr0IIHOo",
+        "name": "Group",
+        "title": "Get Private Intelligence Group Info",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Get Private Intelligence Group Info",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01WT8MM5EZBXM0x1syHVDzFeu8Bm1WT27zr",
+            "name": "HTTP Request",
+            "title": "Search All Events for Private Intel Group ID",
+            "type": "web-service.http_request",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "allow_auto_redirect": true,
+              "content_type": "application/json",
+              "continue_on_error_status_code": false,
+              "continue_on_failure": false,
+              "custom_headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                }
+              ],
+              "display_name": "Search All Events for Private Intel Group ID",
+              "method": "GET",
+              "relative_url": "/ctia/event/search",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+              }
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT8NIQC4IHY7ZIQTHjG6s445zUyHlmXgg",
+            "name": "JSONPath Query",
+            "title": "Extract ID from Response",
+            "type": "corejava.jsonpathquery",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": false,
+              "display_name": "Extract ID from Response",
+              "input_json": "$activity.definition_activity_01WT8MM5EZBXM0x1syHVDzFeu8Bm1WT27zr.output.response_body$",
+              "jsonpath_queries": [
+                {
+                  "jsonpath_query": "$[0].groups[0]",
+                  "jsonpath_query_name": "group_id",
+                  "jsonpath_query_type": "string"
+                }
+              ],
+              "skip_execution": false
+            },
+            "object_type": "definition_activity"
+          }
+        ]
+      },
+      {
+        "unique_name": "definition_activity_01WT8OG7ZOT2D2MtkeQvUVUoRBIx67Beah1",
+        "name": "Group",
+        "title": "Validate/Create IP Indicator",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Validate/Create IP Indicator",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01WT8P2ZR7J5P1NNpQaYeGGi7IzHzhJaKFq",
+            "name": "HTTP Request",
+            "title": "Get Indicators",
+            "type": "web-service.http_request",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "allow_auto_redirect": true,
+              "content_type": "application/json",
+              "continue_on_error_status_code": false,
+              "continue_on_failure": false,
+              "custom_headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                }
+              ],
+              "display_name": "Get Indicators",
+              "method": "GET",
+              "relative_url": "/ctia/indicator/search",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+              }
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT8PP23GUGL7PvL68avgi4oCEp8Gd6cQ9",
+            "name": "JSONPath Query",
+            "title": "Check for IP Indicator",
+            "type": "corejava.jsonpathquery",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": true,
+              "display_name": "Check for IP Indicator",
+              "input_json": "$activity.definition_activity_01WT8P2ZR7J5P1NNpQaYeGGi7IzHzhJaKFq.output.response_body$",
+              "jsonpath_queries": [
+                {
+                  "jsonpath_query": "$[?(@.title == 'IP Indicators for FMC')].id",
+                  "jsonpath_query_name": "ip_indicator_id",
+                  "jsonpath_query_type": "string"
+                }
+              ],
+              "skip_execution": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT8RL0Q3IJJ0aoKzum5dArCbGQTxVMeOs",
+            "name": "Condition Block",
+            "title": "If Indicator Check",
+            "type": "logic.if_else",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "If Indicator Check",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "blocks": [
+              {
+                "unique_name": "definition_activity_01WT8RL1CH8EP1IA0yiJu9NiTxcpPAGz0pO",
+                "name": "Condition Branch",
+                "title": "Fails",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$activity.definition_activity_01WT8PP23GUGL7PvL68avgi4oCEp8Gd6cQ9.output.succeeded$",
+                    "operator": "eq",
+                    "right_operand": false
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Fails",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01WT8TIGGC7LB78pM7ymA7mAdlkCpnh34BX",
+                    "name": "HTTP Request",
+                    "title": "Create Indicator",
+                    "type": "web-service.http_request",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "allow_auto_redirect": true,
+                      "body": "{\n    \"description\": \"Indicator to collect IP judgements for threat feed for FMC\",\n    \"valid_time\": {\n      \"start_time\": \"2021-11-08T21:30:29.991Z\",\n      \"end_time\": \"2525-01-01T00:00:00.000Z\"\n    },\n    \"producer\": \"SecureX Orchestration\",\n    \"schema_version\": \"1.1.3\",\n    \"type\": \"indicator\",\n    \"short_description\": \"Indicator to collect IP judgements for threat feed for FMC\",\n    \"title\": \"IP Indicators for FMC\",\n    \"severity\": \"High\",\n    \"tlp\": \"red\",\n    \"confidence\": \"High\",\n    \"authorized_groups\": [\n    \"$activity.definition_activity_01WT8NIQC4IHY7ZIQTHjG6s445zUyHlmXgg.output.jsonpath_queries.group_id$\"\n    ]\n  }",
+                      "content_type": "application/json",
+                      "continue_on_error_status_code": false,
+                      "continue_on_failure": false,
+                      "custom_headers": [
+                        {
+                          "name": "Authorization",
+                          "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                        }
+                      ],
+                      "display_name": "Create Indicator",
+                      "method": "POST",
+                      "relative_url": "/ctia/indicator",
+                      "runtime_user": {
+                        "target_default": true
+                      },
+                      "skip_execution": false,
+                      "target": {
+                        "override_workflow_target": true,
+                        "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+                      }
+                    },
+                    "object_type": "definition_activity"
+                  },
+                  {
+                    "unique_name": "definition_activity_01WT8VHGTRVY66B40dDd5fxBtFUgkDAjIde",
+                    "name": "JSONPath Query",
+                    "title": "Extract Indicator",
+                    "type": "corejava.jsonpathquery",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "continue_on_failure": false,
+                      "display_name": "Extract Indicator",
+                      "input_json": "$activity.definition_activity_01WT8TIGGC7LB78pM7ymA7mAdlkCpnh34BX.output.response_body$",
+                      "jsonpath_queries": [
+                        {
+                          "jsonpath_query": "$.id",
+                          "jsonpath_query_name": "ip_indicator_id",
+                          "jsonpath_query_type": "string"
+                        }
+                      ],
+                      "skip_execution": false
+                    },
+                    "object_type": "definition_activity"
+                  },
+                  {
+                    "unique_name": "definition_activity_01WT8WFJF0M2G4PfhijRfNj6AJ9BMXBdXig",
+                    "name": "Set Variables",
+                    "title": "Set Variables",
+                    "type": "core.set_multiple_variables",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "Set Variables",
+                      "skip_execution": false,
+                      "variables_to_update": [
+                        {
+                          "variable_to_update": "$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCN330PO72m3ewsqw9O8hcprRgKWynv$",
+                          "variable_value_new": "$activity.definition_activity_01WT8VHGTRVY66B40dDd5fxBtFUgkDAjIde.output.jsonpath_queries.ip_indicator_id$"
+                        }
+                      ]
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              },
+              {
+                "unique_name": "definition_activity_01WT8RL23XII200juwcMrzqPpbiBGVd6oDI",
+                "name": "Condition Branch",
+                "title": "Succeeds",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$activity.definition_activity_01WT8PP23GUGL7PvL68avgi4oCEp8Gd6cQ9.output.succeeded$",
+                    "operator": "eq",
+                    "right_operand": true
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Succeeds",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01WT8WRCM62P061oUfxRegFgAWNX5E384cW",
+                    "name": "Set Variables",
+                    "title": "Set Variables",
+                    "type": "core.set_multiple_variables",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "Set Variables",
+                      "skip_execution": false,
+                      "variables_to_update": [
+                        {
+                          "variable_to_update": "$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCN330PO72m3ewsqw9O8hcprRgKWynv$",
+                          "variable_value_new": "$activity.definition_activity_01WT8PP23GUGL7PvL68avgi4oCEp8Gd6cQ9.output.jsonpath_queries.ip_indicator_id$"
+                        }
+                      ]
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unique_name": "definition_activity_01WT8XCLZQ2LO6MqdZbwXF1am1FUCkMdIlo",
+        "name": "Group",
+        "title": "Validate/Create Domain Indicator",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Validate/Create Domain Indicator",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01WT8XCLZSHGJ0rJayCxdl32FdOVHAD8lLM",
+            "name": "HTTP Request",
+            "title": "Get Indicators",
+            "type": "web-service.http_request",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "allow_auto_redirect": true,
+              "content_type": "application/json",
+              "continue_on_error_status_code": false,
+              "continue_on_failure": false,
+              "custom_headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                }
+              ],
+              "display_name": "Get Indicators",
+              "method": "GET",
+              "relative_url": "/ctia/indicator/search",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+              }
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT8XCLZVP3L4YMgC334Oy9xZ84Kv2mbME",
+            "name": "JSONPath Query",
+            "title": "Check for Domain Indicator",
+            "type": "corejava.jsonpathquery",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": true,
+              "display_name": "Check for Domain Indicator",
+              "input_json": "$activity.definition_activity_01WT8XCLZSHGJ0rJayCxdl32FdOVHAD8lLM.output.response_body$",
+              "jsonpath_queries": [
+                {
+                  "jsonpath_query": "$[?(@.title == 'Domain Indicators for FMC')].id",
+                  "jsonpath_query_name": "domain_indicator_id",
+                  "jsonpath_query_type": "string"
+                }
+              ],
+              "skip_execution": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT8XCLZWI7R6wojcE4Syc4x2ISKoLRA2A",
+            "name": "Condition Block",
+            "title": "If Indicator Check",
+            "type": "logic.if_else",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "If Indicator Check",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "blocks": [
+              {
+                "unique_name": "definition_activity_01WT8XCLZXPGA43Phc5508DEoDnKYtTztzJ",
+                "name": "Condition Branch",
+                "title": "Fails",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$activity.definition_activity_01WT8XCLZVP3L4YMgC334Oy9xZ84Kv2mbME.output.succeeded$",
+                    "operator": "eq",
+                    "right_operand": false
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Fails",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01WT8XCM01R660IY680PLfWnVWAY4YGDG7R",
+                    "name": "HTTP Request",
+                    "title": "Create Indicator",
+                    "type": "web-service.http_request",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "allow_auto_redirect": true,
+                      "body": "{\n    \"description\": \"Indicator to collect Domain judgements for threat feed for FMC\",\n    \"valid_time\": {\n      \"start_time\": \"2021-11-08T21:30:29.991Z\",\n      \"end_time\": \"2525-01-01T00:00:00.000Z\"\n    },\n    \"producer\": \"SecureX Orchestration\",\n    \"schema_version\": \"1.1.3\",\n    \"type\": \"indicator\",\n    \"short_description\": \"Indicator to collect Domain judgements for threat feed for FMC\",\n    \"title\": \"Domain Indicators for FMC\",\n    \"severity\": \"High\",\n    \"tlp\": \"red\",\n    \"confidence\": \"High\",\n    \"authorized_groups\": [\n    \"$activity.definition_activity_01WT8NIQC4IHY7ZIQTHjG6s445zUyHlmXgg.output.jsonpath_queries.group_id$\"\n    ]\n  }",
+                      "content_type": "application/json",
+                      "continue_on_error_status_code": false,
+                      "continue_on_failure": false,
+                      "custom_headers": [
+                        {
+                          "name": "Authorization",
+                          "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                        }
+                      ],
+                      "display_name": "Create Indicator",
+                      "method": "POST",
+                      "relative_url": "/ctia/indicator",
+                      "runtime_user": {
+                        "target_default": true
+                      },
+                      "skip_execution": false,
+                      "target": {
+                        "override_workflow_target": true,
+                        "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+                      }
+                    },
+                    "object_type": "definition_activity"
+                  },
+                  {
+                    "unique_name": "definition_activity_01WT8XCM02IZ46G6P1yoEkrnwVdGgUYkR0j",
+                    "name": "JSONPath Query",
+                    "title": "Extract Indicator",
+                    "type": "corejava.jsonpathquery",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "continue_on_failure": false,
+                      "display_name": "Extract Indicator",
+                      "input_json": "$activity.definition_activity_01WT8XCM01R660IY680PLfWnVWAY4YGDG7R.output.response_body$",
+                      "jsonpath_queries": [
+                        {
+                          "jsonpath_query": "$.id",
+                          "jsonpath_query_name": "domain_indicator_id",
+                          "jsonpath_query_type": "string"
+                        }
+                      ],
+                      "skip_execution": false
+                    },
+                    "object_type": "definition_activity"
+                  },
+                  {
+                    "unique_name": "definition_activity_01WT8XCM056FZ5jzp4t9kPVoE44BCXQbeBg",
+                    "name": "Set Variables",
+                    "title": "Set Variables",
+                    "type": "core.set_multiple_variables",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "Set Variables",
+                      "skip_execution": false,
+                      "variables_to_update": [
+                        {
+                          "variable_to_update": "$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCZLGPAKQ6BET6PTlzJTrZfSouUZquz$",
+                          "variable_value_new": "$activity.definition_activity_01WT8XCM02IZ46G6P1yoEkrnwVdGgUYkR0j.output.jsonpath_queries.domain_indicator_id$"
+                        }
+                      ]
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              },
+              {
+                "unique_name": "definition_activity_01WT8XCM060I53l8uZ1IOaOlyRw5YAVxuNG",
+                "name": "Condition Branch",
+                "title": "Succeeds",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$activity.definition_activity_01WT8XCLZVP3L4YMgC334Oy9xZ84Kv2mbME.output.succeeded$",
+                    "operator": "eq",
+                    "right_operand": true
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Succeeds",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01WT8XCM08EOZ7Y9DxpiY6lU1jGgAhXXgP5",
+                    "name": "Set Variables",
+                    "title": "Set Variables",
+                    "type": "core.set_multiple_variables",
+                    "base_type": "activity",
+                    "properties": {
+                      "continue_on_failure": false,
+                      "display_name": "Set Variables",
+                      "skip_execution": false,
+                      "variables_to_update": [
+                        {
+                          "variable_to_update": "$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCZLGPAKQ6BET6PTlzJTrZfSouUZquz$",
+                          "variable_value_new": "$activity.definition_activity_01WT8XCLZVP3L4YMgC334Oy9xZ84Kv2mbME.output.jsonpath_queries.domain_indicator_id$"
+                        }
+                      ]
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unique_name": "definition_activity_01WT8ZKWGTUQJ2o30ToKm1L0BbTdYHFhum1",
+        "name": "Group",
+        "title": "Validate/Create IP Feed",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Validate/Create IP Feed",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01WT8ZQMEAKN75uS793JqqCE4vwhnU98raX",
+            "name": "HTTP Request",
+            "title": "Get Feeds",
+            "type": "web-service.http_request",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "allow_auto_redirect": true,
+              "content_type": "application/json",
+              "continue_on_error_status_code": false,
+              "continue_on_failure": false,
+              "custom_headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                }
+              ],
+              "display_name": "Get Feeds",
+              "method": "GET",
+              "relative_url": "/ctia/feed/search",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+              }
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT90KATB9Q90shfytJqKjR6sOH6qheTSD",
+            "name": "JSONPath Query",
+            "title": "Extract Feed Details",
+            "type": "corejava.jsonpathquery",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": true,
+              "display_name": "Extract Feed Details",
+              "input_json": "$activity.definition_activity_01WT8ZQMEAKN75uS793JqqCE4vwhnU98raX.output.response_body$",
+              "jsonpath_queries": [
+                {
+                  "jsonpath_query": "$[?(@.title == 'SXO IP Feed for FMC')]",
+                  "jsonpath_query_name": "feed_id",
+                  "jsonpath_query_type": "string"
+                }
+              ],
+              "skip_execution": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT9252R3SMZ0wvk7lo0ZyW4XYZ1Dl2dII",
+            "name": "Condition Block",
+            "title": "If Feed Lookup",
+            "type": "logic.if_else",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "If Feed Lookup",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "blocks": [
+              {
+                "unique_name": "definition_activity_01WT92539TYRC4qwWSK8AQTlbwnTG7WDbRO",
+                "name": "Condition Branch",
+                "title": "Fails",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$activity.definition_activity_01WT90KATB9Q90shfytJqKjR6sOH6qheTSD.output.succeeded$",
+                    "operator": "eq",
+                    "right_operand": false
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Fails",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01WT94KRVNR7D4csKamvxSEMymfESn2luBk",
+                    "name": "HTTP Request",
+                    "title": "Create Feed",
+                    "type": "web-service.http_request",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "allow_auto_redirect": true,
+                      "body": "{\n    \"indicator_id\": \"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCN330PO72m3ewsqw9O8hcprRgKWynv$\",\n    \"type\": \"feed\",\n    \"output\": \"observables\",\n    \"title\": \"SXO IP Feed for FMC\",\n    \"tlp\": \"amber\",\n    \"lifetime\": {\n      \"start_time\": \"2022-01-01T10:10:00.000Z\"\n    },\n  \"authorized_groups\": [\n      \"$activity.definition_activity_01WT8NIQC4IHY7ZIQTHjG6s445zUyHlmXgg.output.jsonpath_queries.group_id$\"\n    ],\n    \"feed_type\": \"indicator\"\n  }",
+                      "content_type": "application/json",
+                      "continue_on_error_status_code": false,
+                      "continue_on_failure": false,
+                      "custom_headers": [
+                        {
+                          "name": "Authorization",
+                          "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                        }
+                      ],
+                      "display_name": "Create Feed",
+                      "method": "POST",
+                      "relative_url": "/ctia/feed",
+                      "runtime_user": {
+                        "target_default": true
+                      },
+                      "skip_execution": false,
+                      "target": {
+                        "override_workflow_target": true,
+                        "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+                      }
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "unique_name": "definition_activity_01WT966BJGTAL6lo7XNSgUmhxYuM34ELHWK",
+        "name": "Group",
+        "title": "Validate/Create Domain Feed",
+        "type": "logic.group",
+        "base_type": "activity",
+        "properties": {
+          "continue_on_failure": false,
+          "display_name": "Validate/Create Domain Feed",
+          "skip_execution": false
+        },
+        "object_type": "definition_activity",
+        "actions": [
+          {
+            "unique_name": "definition_activity_01WT966BJK18D6R4ypDtBGZJe5PPtb9Z6eW",
+            "name": "HTTP Request",
+            "title": "Get Feeds",
+            "type": "web-service.http_request",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "allow_auto_redirect": true,
+              "content_type": "application/json",
+              "continue_on_error_status_code": false,
+              "continue_on_failure": false,
+              "custom_headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                }
+              ],
+              "display_name": "Get Feeds",
+              "method": "GET",
+              "relative_url": "/ctia/feed/search",
+              "runtime_user": {
+                "target_default": true
+              },
+              "skip_execution": false,
+              "target": {
+                "override_workflow_target": true,
+                "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+              }
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT966BJO6712aFdB95BfbU9QfTQtWE6pA",
+            "name": "JSONPath Query",
+            "title": "Extract Feed Details",
+            "type": "corejava.jsonpathquery",
+            "base_type": "activity",
+            "properties": {
+              "action_timeout": 180,
+              "continue_on_failure": true,
+              "display_name": "Extract Feed Details",
+              "input_json": "$activity.definition_activity_01WT966BJK18D6R4ypDtBGZJe5PPtb9Z6eW.output.response_body$",
+              "jsonpath_queries": [
+                {
+                  "jsonpath_query": "$[?(@.title == 'SXO Domain Feed for FMC')]",
+                  "jsonpath_query_name": "feed_id",
+                  "jsonpath_query_type": "string"
+                }
+              ],
+              "skip_execution": false
+            },
+            "object_type": "definition_activity"
+          },
+          {
+            "unique_name": "definition_activity_01WT966BJOXQA5ZzfyNMvu1RaC0tXrXsUWf",
+            "name": "Condition Block",
+            "title": "If Feed Lookup",
+            "type": "logic.if_else",
+            "base_type": "activity",
+            "properties": {
+              "continue_on_failure": false,
+              "display_name": "If Feed Lookup",
+              "skip_execution": false
+            },
+            "object_type": "definition_activity",
+            "blocks": [
+              {
+                "unique_name": "definition_activity_01WT966BJQ9JF0D4YiCJtHn9bwqGGjypFFz",
+                "name": "Condition Branch",
+                "title": "Fails",
+                "type": "logic.condition_block",
+                "base_type": "activity",
+                "properties": {
+                  "condition": {
+                    "left_operand": "$activity.definition_activity_01WT966BJO6712aFdB95BfbU9QfTQtWE6pA.output.succeeded$",
+                    "operator": "eq",
+                    "right_operand": false
+                  },
+                  "continue_on_failure": false,
+                  "display_name": "Fails",
+                  "skip_execution": false
+                },
+                "object_type": "definition_activity",
+                "actions": [
+                  {
+                    "unique_name": "definition_activity_01WT966BJT9Z32bIW5QHkrVusAHNcbHajiD",
+                    "name": "HTTP Request",
+                    "title": "Create Feed",
+                    "type": "web-service.http_request",
+                    "base_type": "activity",
+                    "properties": {
+                      "action_timeout": 180,
+                      "allow_auto_redirect": true,
+                      "body": "{\n    \"indicator_id\": \"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCZLGPAKQ6BET6PTlzJTrZfSouUZquz$\",\n    \"type\": \"feed\",\n    \"output\": \"observables\",\n    \"title\": \"SXO Domain Feed for FMC\",\n    \"tlp\": \"amber\",\n    \"lifetime\": {\n      \"start_time\": \"2022-01-01T10:10:00.000Z\"\n    },\n  \"authorized_groups\": [\n      \"$activity.definition_activity_01WT8NIQC4IHY7ZIQTHjG6s445zUyHlmXgg.output.jsonpath_queries.group_id$\"\n    ],\n    \"feed_type\": \"indicator\"\n  }",
+                      "content_type": "application/json",
+                      "continue_on_error_status_code": false,
+                      "continue_on_failure": false,
+                      "custom_headers": [
+                        {
+                          "name": "Authorization",
+                          "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                        }
+                      ],
+                      "display_name": "Create Feed",
+                      "method": "POST",
+                      "relative_url": "/ctia/feed",
+                      "runtime_user": {
+                        "target_default": true
+                      },
+                      "skip_execution": false,
+                      "target": {
+                        "override_workflow_target": true,
+                        "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
+                      }
+                    },
+                    "object_type": "definition_activity"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       },
       {
         "unique_name": "definition_activity_01SNR45FYC8CO1MMDioMYIZeTsr0ao3zmIX",
@@ -106,7 +884,7 @@
           "accept": "applicaton/json",
           "action_timeout": 180,
           "allow_auto_redirect": true,
-          "body": "{\"confidence\":\"High\",\"disposition\":2,\"priority\":100,\"severity\":\"High\",\"source\":\"ATS Pivot Menu\",\"tlp\":\"amber\",\"type\":\"judgement\",\"observable\":{\"type\":\"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.input.variable_workflow_01SNQZS7ULO2R25TuODu02WydNHanxWBzdJ$\",\"value\":\"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.input.variable_workflow_01SNQZZNMLCGO3ySewxroywCPGFDHmkiSDF$\"},\"reason\":\"\",\"valid_time\":{\"start_time\":\"2021-11-08T21:20:46.979Z\",\"end_time\":\"2021-12-08T21:20:46.979Z\"}}",
+          "body": "{\n  \"confidence\": \"High\",\n  \"disposition\": 2,\n  \"priority\": 100,\n  \"severity\": \"High\",\n  \"source\": \"ATS Pivot Menu\",\n  \"tlp\": \"amber\",\n  \"type\": \"judgement\",\n  \"observable\": {\n    \"type\": \"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.input.variable_workflow_01SNQZS7ULO2R25TuODu02WydNHanxWBzdJ$\",\n    \"value\": \"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.input.variable_workflow_01SNQZZNMLCGO3ySewxroywCPGFDHmkiSDF$\"\n  },\n  \"reason\": \"\",\n  \"valid_time\": {\n    \"start_time\": \"2021-11-08T21:20:46.979Z\",\n    \"end_time\": \"2021-12-08T21:20:46.979Z\"\n  },\n\"authorized_groups\": [\n      \"$activity.definition_activity_01WT8NIQC4IHY7ZIQTHjG6s445zUyHlmXgg.output.jsonpath_queries.group_id$\"\n    ]\n}",
           "content_type": "application/json",
           "continue_on_error_status_code": false,
           "continue_on_failure": false,
@@ -190,13 +968,50 @@
                 "type": "web-service.http_request",
                 "base_type": "activity",
                 "properties": {
+                  "accept": "application/json",
                   "action_timeout": 180,
                   "allow_auto_redirect": true,
                   "body": "{\"source_ref\":\"$activity.definition_activity_01SNR8M237C2V6zvd377WSlhjTHeLwDTBVD.output.jsonpath_queries.judgement_id$\",\"target_ref\":\"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCN330PO72m3ewsqw9O8hcprRgKWynv$\",\"type\":\"relationship\",\"relationship_type\":\"element-of\"}",
+                  "content_type": "application/json",
                   "continue_on_error_status_code": false,
                   "continue_on_failure": false,
+                  "custom_headers": [
+                    {
+                      "name": "Authorization",
+                      "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                    },
+                    {
+                      "name": "x-client-app",
+                      "value": "ribbon-services"
+                    },
+                    {
+                      "name": "sec-ch-ua",
+                      "value": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"99\", \"Google Chrome\";v=\"99\""
+                    },
+                    {
+                      "name": "sec-ch-ua-mobile",
+                      "value": "?0"
+                    },
+                    {
+                      "name": "sec-ch-ua-platform",
+                      "value": "macOS"
+                    },
+                    {
+                      "name": "sec-fetch-dest",
+                      "value": "empty"
+                    },
+                    {
+                      "name": "sec-fetch-mode",
+                      "value": "cors"
+                    },
+                    {
+                      "name": "sec-fetch-site",
+                      "value": "same-site"
+                    }
+                  ],
                   "display_name": "Update SecureX Private Intelligence Indicator",
-                  "method": "GET",
+                  "method": "POST",
+                  "relative_url": "/ctia/relationship",
                   "runtime_user": {
                     "target_default": true
                   },
@@ -204,7 +1019,8 @@
                   "target": {
                     "override_workflow_target": true,
                     "target_id": "definition_target_01K5COU2P4BJ93qEsN20qTZ7JxYaSsM3m36"
-                  }
+                  },
+                  "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"
                 },
                 "object_type": "definition_activity"
               }
@@ -238,10 +1054,18 @@
                   "action_timeout": 180,
                   "allow_auto_redirect": true,
                   "body": "{\"source_ref\":\"$activity.definition_activity_01SNR8M237C2V6zvd377WSlhjTHeLwDTBVD.output.jsonpath_queries.judgement_id$\",\"target_ref\":\"$workflow.definition_workflow_01SNQZ28N81OA7AwTTP52l2G9k5lPwEp3ak.local.variable_workflow_01SNRCZLGPAKQ6BET6PTlzJTrZfSouUZquz$\",\"type\":\"relationship\",\"relationship_type\":\"element-of\"}",
+                  "content_type": "application/json",
                   "continue_on_error_status_code": false,
                   "continue_on_failure": false,
+                  "custom_headers": [
+                    {
+                      "name": "Authorization",
+                      "value": "Bearer $activity.definition_activity_01SNQZII8JN3R2dChHWz74YKyOTgGHDDtS4.output.variable_workflow_01PP75S3G7CJY6WAQr2IJC7qga2SIoE09gQ$"
+                    }
+                  ],
                   "display_name": "Update SecureX Private Intelligence Indicator",
-                  "method": "GET",
+                  "method": "POST",
+                  "relative_url": "/ctia/relationship",
                   "runtime_user": {
                     "target_default": true
                   },
@@ -319,14 +1143,17 @@
       "base_type": "runtime_user",
       "object_type": "definition_runtime_user",
       "properties": {
-        "auth_option": "*****",
+        "auth_option": "Basic",
         "basic_password": "*****",
-        "basic_username": "*****",
+        "basic_username": "client-6350ce4f-712a-4ed1-a162-1d876b3e8aa0",
         "display_name": "CTR_Credentials"
       }
     }
   },
   "atomic_workflows": [
+    "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH"
+  ],
+  "dependent_workflows": [
     "definition_workflow_01PP75S3LTBW4420OZU3rdHWKHFnE6aC7yH"
   ]
 }
